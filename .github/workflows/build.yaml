@@ -1,0 +1,57 @@
+name: Docker build and push
+
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    # run after official build (which is Friday evening)
+    # run once a month
+    - cron: '5 4 1-7 * 6'
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  # cancel already in progress jobs
+  group: ${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        odoo-version: ["14.0", "16.0"]
+    env:
+      ODOO_VERSION: "${{ matrix.odoo-version }}"
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Login to GitHub Packages
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build Odoo Community Docker base
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        file: Dockerfile.ubuntu
+        target: base
+        build-args: ODOO_VERSION=${{ env.ODOO_VERSION }}
+        tags: ghcr.io/${{ github.repository }}:${{ env.ODOO_VERSION }}-base
+        push: true
+    - name: Build Odoo Community Docker image
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        file: Dockerfile.ubuntu
+        target: odoo
+        build-args: ODOO_VERSION=${{ env.ODOO_VERSION }}
+        tags: ghcr.io/${{ github.repository }}:${{ env.ODOO_VERSION }}
+        push: true

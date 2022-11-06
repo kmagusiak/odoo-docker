@@ -1,0 +1,13 @@
+# linting and formatting
+black
+flake8
+isort
+pylint-odoo
+
+# debugging and tools
+debugpy
+ipython
+jupyterlab
+
+# unit testing (chrome)
+websocket-client

@@ -1,0 +1,13 @@
+version: "3.7"
+# docker-compose to enable tests
+
+services:
+  odoo:
+    restart: "no"
+    environment:
+      - DB_NAME_TEST=test_odoo
+      - LOG_LEVEL=info
+      - WITHOUT_DEMO=False
+      - PIP_AUTO_INSTALL=1
+      - DEBUGPY_ENABLE=0
+    command: ["odoo-test", "--test-enable", "--"]
