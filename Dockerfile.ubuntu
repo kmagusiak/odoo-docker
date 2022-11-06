@@ -42,25 +42,26 @@ run git clone --quiet --depth 1 "--branch=$ODOO_VERSION" $ODOO_SOURCE/odoo.git \
 run pip install --prefix=/usr/local --no-cache-dir --upgrade -r ${ODOO_BASEPATH}/requirements.txt
 
 # Create user and mounts
-# /var/lib/odoo to allow restoring filestore
+# /var/lib/odoo for filestore and HOME
 # /mnt/extra-addons for users addons
-run useradd --uid 1000 --no-create-home -b /opt/odoo odoo
 env ODOO_RC /etc/odoo/odoo.conf
 env ODOO_BASE_ADDONS=/mnt/odoo-addons
 env ODOO_EXTRA_ADDONS=/mnt/extra-addons
 env PYTHON_DIST_PACKAGES=/usr/lib/python3/dist-packages
 run mkdir -p /etc/odoo \
+    && chmod 775 /etc/odoo \
     && mkdir -p "${ODOO_BASE_ADDONS}" "${ODOO_EXTRA_ADDONS}" "${ODOO_DATA_DIR}" \
+	&& useradd --uid 999 --no-create-home --base-dir "${ODOO_DATA_DIR}" odoo \
     && chown -R odoo:odoo /etc/odoo "${ODOO_BASE_ADDONS}" "${ODOO_EXTRA_ADDONS}" "${ODOO_DATA_DIR}" \
     && echo "$ODOO_BASEPATH" > "$PYTHON_DIST_PACKAGES/odoo.pth" \
-    && ln -s "${ODOO_BASEPATH}/odoo-bin" /usr/local/bin/odoo
-volume ["${ODOO_DATA_DIR}", "${ODOO_EXTRA_ADDONS}"]
+    && ln -s "${ODOO_BASEPATH}/odoo-bin" /usr/bin/odoo
+volume ["${ODOO_DATA_DIR}"]
 
 # Expose Odoo services
 expose 8069 8071 8072
 
 # Copy entrypoint script and Odoo configuration file
-run pip install --prefix=/usr/local --no-cache-dir click-odoo-contrib
+run pip install --prefix=/usr/local --no-cache-dir click-odoo-contrib debugpy
 copy resources/wait-for-psql.py resources/odoo-getaddons.py resources/odoo-test /usr/local/bin/
 copy resources/entrypoint.sh /
 entrypoint ["/entrypoint.sh"]
