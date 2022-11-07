@@ -25,11 +25,6 @@ These are loaded into the odoo container and a configuration file is generated
 every time the container starts at `/etc/odoo/odoo.conf`.
 The default database is `odoo`.
 
-### Alternative (Dockerfile.odoo-based)
-We are starting from the [official Odoo docker image](https://github.com/odoo/docker).
-We move Odoo sources to `/opt/odoo` (ODOO_BASEPATH) so that you can easily
-mount your own sources.
-
 # Using the image
 
 ## Backup and restore database

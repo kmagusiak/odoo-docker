@@ -37,15 +37,6 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Build Odoo Community Docker base
-      uses: docker/build-push-action@v3
-      with:
-        context: .
-        file: Dockerfile.ubuntu
-        target: base
-        build-args: ODOO_VERSION=${{ env.ODOO_VERSION }}
-        tags: ghcr.io/${{ github.repository }}:${{ env.ODOO_VERSION }}-base
-        push: true
     - name: Build Odoo Community Docker image
       uses: docker/build-push-action@v3
       with:
