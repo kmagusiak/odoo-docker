@@ -2,6 +2,3 @@
 *.py[cod]
 __pycache__
 .mypy_cache
-
-# Other files
-.env
