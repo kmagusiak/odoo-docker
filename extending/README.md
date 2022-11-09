@@ -1,9 +1,7 @@
 # How to use this repository
 
-You don't need to clone it, it provides a Docker image that you can
-easily extend for development.
-See files located in the `extending` folder to see some examples that you
-may use.
+You can use the Dockerfiles present in this repository as well as the build
+script for the github action.
 
 ## Access to private repositories (SSH)
 You will need access to private repositories in github, this can be done either

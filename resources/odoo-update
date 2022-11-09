@@ -1,0 +1,8 @@
+#!/bin/bash
+if [ $# -eq 0 ]
+then
+	echo "Usage: odoo-update module1,module2"
+	exit 1
+fi
+[ "$1" != -* ] || set -- '' "$@"
+odoo --no-http --workers=0 --stop-after-init -u "$@"

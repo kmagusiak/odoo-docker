@@ -62,7 +62,7 @@ expose 8069 8071 8072
 
 # Copy entrypoint script and Odoo configuration file
 run pip install --prefix=/usr/local --no-cache-dir click-odoo-contrib debugpy
-copy resources/wait-for-psql.py resources/odoo-getaddons.py resources/odoo-test /usr/local/bin/
+copy resources/wait-for-psql.py resources/odoo-* /usr/local/bin/
 copy resources/entrypoint.sh /
 entrypoint ["/entrypoint.sh"]
 
