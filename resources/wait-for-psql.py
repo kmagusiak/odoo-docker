@@ -1,38 +1,41 @@
 #!/usr/bin/env python3
-import argparse
+import os
 import sys
 import time
 
 import psycopg2
 
-if __name__ == '__main__':
-    arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('--db_host', required=True)
-    arg_parser.add_argument('--db_port', required=True)
-    arg_parser.add_argument('--db_user', required=True)
-    arg_parser.add_argument('--db_password', required=True)
-    arg_parser.add_argument('--timeout', type=int, default=5)
 
-    args = arg_parser.parse_args()
-
+def try_connect(conn_info, timeout=30):
     start_time = time.time()
-    while (time.time() - start_time) < args.timeout:
+    while True:
         try:
-            conn = psycopg2.connect(
-                user=args.db_user,
-                host=args.db_host,
-                port=args.db_port,
-                password=args.db_password,
-                dbname='postgres',
-            )
-            error = None
-            break
-        except psycopg2.OperationalError as e:
-            error = e
-        else:
-            conn.close()
-        time.sleep(1)
+            conn = psycopg2.connect(**conn_info)
+        except psycopg2.OperationalError:
+            if (time.time() - start_time) < timeout:
+                time.sleep(1)
+                continue
+            raise
+        conn.close()
+        return
 
-    if error:
+
+def main():
+    # standard env variables for psql
+    conn_info = {
+        'host': os.environ.get('PGHOST'),
+        'port': int(os.environ.get('PGPORT', 5432)),
+        'user': os.environ.get('PGUSER'),
+        'password': os.environ.get('PGPASSWORD'),
+        'dbname': os.environ.get('DBDATABASE', 'postgres'),
+    }
+    timeout = int(os.environ.get('PGTIMEOUT', 30))
+    try:
+        try_connect(conn_info, timeout)
+    except psycopg2.Error as error:
         print("Database connection failure: %s" % error, file=sys.stderr)
         sys.exit(1)
+
+
+if __name__ == '__main__':
+    main()

@@ -1,3 +1,4 @@
+# !!! this is not maintained anymore
 arg ODOO_VERSION=16.0
 from odoo:${ODOO_VERSION} as base
 env PYTHONUNBUFFERED 1

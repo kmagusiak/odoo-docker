@@ -1,23 +1,11 @@
 #!/bin/bash
-
 set -eu
 
-if [ -v PASSWORD_FILE ]
-then
-    PASSWORD="$(< $PASSWORD_FILE)"
-fi
-
-# set the postgres database host, port, user and password according to the environment
-# and pass them as arguments to the odoo process if not present in the config file
-: ${PGHOST:=${DB_PORT_5432_TCP_ADDR:-${POSTGRES_HOST:-db}}}
-: ${PGPORT:=${DB_PORT_5432_TCP_PORT:-${POSTGRES_PORT:-5432}}}
-: ${PGUSER:=${DB_ENV_POSTGRES_USER:=${POSTGRES_USER:-odoo}}}
-: ${PGPASSWORD:=${DB_ENV_POSTGRES_PASSWORD:=${POSTGRES_PASSWORD:-odoo}}}
-
 # set all variables
+source /pg.env
 : ${ODOO_BASEPATH:=/opt/odoo}
 ODOO_BIN="$ODOO_BASEPATH/odoo-bin"
-: ${ODOO_BASE_ADDONS:=/mnt/odoo-addons}
+: ${ODOO_BASE_ADDONS:=/opt/odoo-addons}
 : ${ODOO_EXTRA_ADDONS:=/mnt/extra-addons}
 EXTRA_ADDONS_PATHS=$(odoo-getaddons.py ${ODOO_EXTRA_ADDONS} ${ODOO_BASE_ADDONS} ${ODOO_BASEPATH})
 
@@ -80,19 +68,6 @@ then
     done
 fi
 
-DB_ARGS=()
-function check_config() {
-    param="$1"
-    value="$2"
-    DB_ARGS+=("--${param}" "${value}")
-}
-
-export PGHOST PGPORT PGUSER PGPASSWORD
-check_config "db_host" "$PGHOST"
-check_config "db_port" "$PGPORT"
-check_config "db_user" "$PGUSER"
-check_config "db_password" "$PGPASSWORD"
-
 # if we have an odoo command, just prepend odoo
 case "${1:-}" in
     scaffold | shell | -*)
@@ -119,7 +94,7 @@ case "${1:-}" in
         fi
 
         echo "ENTRY - Wait for postgres"
-        wait-for-psql.py "${DB_ARGS[@]}" --timeout=30
+        wait-for-psql.py
 
         if [ -n "${TEST_MODULE_PATH:-}" ]
         then
@@ -145,7 +120,7 @@ case "${1:-}" in
         fi
         echo "$@"
         echo "ENTRY - Start odoo..."
-        exec "$@" "${DB_ARGS[@]}"
+        exec "$@"
         ;;
     *)
         exec "$@"

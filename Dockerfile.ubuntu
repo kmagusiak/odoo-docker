@@ -45,7 +45,7 @@ run pip install --prefix=/usr/local --no-cache-dir --upgrade -r ${ODOO_BASEPATH}
 # /var/lib/odoo for filestore and HOME
 # /mnt/extra-addons for users addons
 env ODOO_RC /etc/odoo/odoo.conf
-env ODOO_BASE_ADDONS=/mnt/odoo-addons
+env ODOO_BASE_ADDONS=/opt/odoo-addons
 env ODOO_EXTRA_ADDONS=/mnt/extra-addons
 env PYTHON_DIST_PACKAGES=/usr/lib/python3/dist-packages
 run mkdir -p /etc/odoo \
@@ -63,7 +63,7 @@ expose 8069 8071 8072
 # Copy entrypoint script and Odoo configuration file
 run pip install --prefix=/usr/local --no-cache-dir click-odoo-contrib debugpy
 copy resources/wait-for-psql.py resources/odoo-* /usr/local/bin/
-copy resources/entrypoint.sh /
+copy resources/entrypoint.sh resources/pg.env /
 entrypoint ["/entrypoint.sh"]
 
 ###############################

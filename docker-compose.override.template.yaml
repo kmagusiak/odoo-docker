@@ -4,4 +4,4 @@ services:
   odoo:
     volumes: []
     #- ./odoo:/opt/odoo:cached
-    #- ./odoo-addons:/mnt/odoo-addons:cached
+    #- ./odoo-addons:/opt/odoo-addons:cached
