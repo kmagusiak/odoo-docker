@@ -78,12 +78,18 @@ esac
 # dispatch the command
 case "${1:-}" in
     -- | odoo | odoo-* | "")
+        : ${BASE_MODULES:=base}
         if [[ "${1:-}" == odoo-test ]]
         then
             ODOO_BIN=$(which odoo-test)
             : ${TEST_MODULE_PATH:=$ODOO_EXTRA_ADDONS}
-            : ${BASE_MODULES:=base}
             shift
+            if [ -n "${TEST_MODULE_PATH:-}" ]
+            then
+                echo "ENTRY - Enable testing for path: ${TEST_MODULE_PATH}"
+                set -- -d "${DB_NAME_TEST:-${DB_NAME:-odoo_test}}" --get-addons "${TEST_MODULE_PATH}" "$@"
+                UPGRADE_ENABLE=0
+            fi
         elif [[ "${2:-}" == "scaffold" ]]
         then
             shift
@@ -96,11 +102,7 @@ case "${1:-}" in
         echo "ENTRY - Wait for postgres"
         wait-for-psql.py
 
-        if [ -n "${TEST_MODULE_PATH:-}" ]
-        then
-            echo "ENTRY - Enable testing for path: ${TEST_MODULE_PATH}"
-            set -- -d "${DB_NAME_TEST:-${DB_NAME:-odoo_test}}" --get-addons "${TEST_MODULE_PATH}" "$@"
-        elif [ "${UPGRADE_ENABLE:-0}" == "1" ]
+        if [ "${UPGRADE_ENABLE:-0}" == "1" ]
         then
             ODOO_DB_LIST=$(psql -X -A -d postgres -t -c "SELECT STRING_AGG(datname, ' ') FROM pg_database WHERE datdba=(SELECT usesysid FROM pg_user WHERE usename=current_user) AND NOT datistemplate and datallowconn AND datname <> 'postgres'")
             for db in ${ODOO_DB_LIST}
