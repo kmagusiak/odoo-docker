@@ -2,6 +2,9 @@
 
 Build a docker image with Odoo for local development and test purposes.
 
+See [odoo-vscode](https://github.com/kmagusiak/odoo-vscode)
+for a dev environment.
+
 # Using the image
 
 ## Building your image

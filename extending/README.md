@@ -16,7 +16,7 @@ We use the SSH keys as they don't appear in the executed commands.
 
 For github actions, generate a private key and add it to the secrets of the project.
 
-## Alternative *Dockerfile.odoo-based*
+## Alternative *Dockerfile.odoo-based* (unmaintained)
 We are starting from the [official Odoo docker image](https://github.com/odoo/docker).
 We move Odoo sources to `/opt/odoo` (ODOO_BASEPATH) so that you can easily
 mount your own sources.

@@ -12,7 +12,9 @@ run apt-get update \
 	&& apt-get install -y --no-install-recommends chromium-driver \
 	&& pip3 install --no-cache invoke -r /tmp/requirements-dev.txt \
 	&& rm -f /tmp/requirements-dev.txt
-run useradd -G odoo --create-home vscode \
+arg DEV_UID=1000
+run useradd --uid "${DEV_UID}" -G odoo --create-home vscode \
+	&& echo "root:${ADMIN_PASSWORD}" | chpasswd \
 	&& mkdir /odoo-workspace \
 	&& chown vscode:odoo /odoo-workspace
 user vscode
