@@ -3,7 +3,7 @@
 
 """
 Usage: odoo-getaddons [-m] path1 [path2 ...]
-Given a list  of paths, finds and returns a list of valid addons paths.
+Given a list of paths, finds and returns a list of valid addons paths.
 With -m flag, will return a list of modules names instead.
 """
 
@@ -151,7 +151,7 @@ def main(argv=None):
         metavar='depth',
         type=int,
         nargs='?',
-        const=1,
+        const=3,
         help="List the module names instead of paths",
     )
     parser.add_argument('--only-applications', dest='application', action='store_const', const=True)

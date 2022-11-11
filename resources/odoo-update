@@ -1,8 +1,20 @@
 #!/bin/bash
-if [ $# -eq 0 ]
-then
-	echo "Usage: odoo-update module1,module2"
+case "${1:-}" in
+"")
+	echo "Usage: $0 module1,module2 ...options"
 	exit 1
-fi
-[ "$1" != -* ] || set -- '' "$@"
-odoo --no-http --workers=0 --stop-after-init -u "$@"
+	;;
+-*)
+	modules=''
+	;;
+*/*)
+	modules="$(odoo-getaddons.py "$1" -m 3)"
+	echo "Modules: $modules"
+	shift;;
+*)
+	modules=$1
+	shift;;
+esac
+
+# install (if not there yet) and update (if already installed)
+exec odoo --no-http --workers=0 --stop-after-init -i "$modules" -u "$modules" "$@"
