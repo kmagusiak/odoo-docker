@@ -83,20 +83,7 @@ case "${1:-}" in
             shift
             ODOO_BIN=$(which odoo-test)
             : ${BASE_MODULES:=base}
-            export BASE_MODULES
-            if [ -n "${INSTALL_MODULES:-}" ]
-            then
-                echo "ENTRY - Enable testing for: ${INSTALL_MODULES}"
-                set -- --addons "${INSTALL_MODULES}" "$@"
-            else
-                : ${TEST_MODULE_PATH:=$ODOO_EXTRA_ADDONS}
-            fi
-            if [ -n "${TEST_MODULE_PATH:-}" ]
-            then
-                echo "ENTRY - Enable testing for path: ${TEST_MODULE_PATH}"
-                set -- --get-addons "${TEST_MODULE_PATH}" "$@"
-            fi
-            set -- -d "${DB_NAME_TEST:-${DB_NAME:-odoo_test}}" "$@"
+            echo "ENTRY - Enable testing"
             UPGRADE_ENABLE=0
         elif [[ "${2:-}" == "scaffold" ]]
         then
