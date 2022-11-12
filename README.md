@@ -3,7 +3,7 @@
 Build a docker image with Odoo for local development and test purposes.
 
 See [odoo-vscode](https://github.com/kmagusiak/odoo-vscode)
-for a dev environment.
+for a working dev environment.
 
 # Using the image
 
@@ -14,8 +14,7 @@ and testing.
 https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
 
 You can clone this repository and adapt the files as you wish.
-In the [extending](./extending/README.md) directory, you will find examples
-of Dockerfiles to build
+In the [extending](./extending/README.md) directory, you will find examples.
 
 ## Backup and restore database
 
@@ -67,7 +66,8 @@ Some other variables control the startup:
 - PIP_AUTO_INSTALL: discover *requirements.txt* files in addons folders and
   install them when starting the container (default: true)
 - UPGRADE_ENABLE: when starting, run `click-odoo-update` (default: false)
-- DEBUGPY_ENABLE: run odoo with `debugpy`, on port DEBUGPY_PORT=41234
+- INSTALL_MODULES: modules to install when creating the database (default: none)
+- DEBUGPY_ENABLE: run odoo with `debugpy`
 
 # Credits
 

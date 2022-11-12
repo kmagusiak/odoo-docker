@@ -41,7 +41,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         context: .
-        file: Dockerfile.ubuntu
+        file: Dockerfile
         target: odoo
         build-args: ODOO_VERSION=${{ env.ODOO_VERSION }}
         tags: ghcr.io/${{ github.repository }}:${{ env.ODOO_VERSION }}

@@ -88,9 +88,7 @@ def parse_args(args):
     addons = (arg.addons or '').split(',')
     if arg.get_addons:
         addons += get_modules(arg.get_addons, depth=3)
-    base_addons = ((os.environ.get('BASE_MODULES') or '') + ',' + (arg.base_addons or '')).split(
-        ','
-    )
+    base_addons = (arg.base_addons or os.environ.get('BASE_MODULES') or '').split(',')
     if args[:1] == ['--']:
         args = args[1:]
     if arg.test_enable:
@@ -112,10 +110,12 @@ def main(args=None):
     addons = arg['addons']
     base_addons = arg['base_addons']
 
+    if not dbname:
+        print("TEST - Missing database name")
+        sys.exit(1)
     if not addons:
         print("TEST - No modules to test")
         sys.exit(1)
-        return
 
     # create db with base modules
     print_time('Start')

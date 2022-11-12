@@ -2,6 +2,13 @@
 
 You can use the Dockerfiles present in this repository as well as the build
 script for the github action.
+The files show how to build private repositories, since *enterprise* is not
+publicly available.
+
+The recommended way of building your images is to:
+- Fork this repository
+- Append Docker *targets* in the main `Dockerfile`
+- Replace or adapt the github build workflow
 
 ## Access to private repositories (SSH)
 You will need access to private repositories in github, this can be done either

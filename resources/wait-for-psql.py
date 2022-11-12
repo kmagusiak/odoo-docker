@@ -27,7 +27,7 @@ def main():
         'port': int(os.environ.get('PGPORT', 5432)),
         'user': os.environ.get('PGUSER'),
         'password': os.environ.get('PGPASSWORD'),
-        'dbname': os.environ.get('DBDATABASE', 'postgres'),
+        'dbname': os.environ.get('PGDATABASE', 'postgres'),
     }
     timeout = int(os.environ.get('PGTIMEOUT', 30))
     try:

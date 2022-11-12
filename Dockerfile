@@ -29,13 +29,15 @@ run curl -o wkhtmltox.deb -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releas
     && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
 
 # Install/Clone Odoo
+# If using HTTPS clone:
+arg ODOO_SOURCE=https://github.com/odoo
+# If using SSH clone:
+# arg ODOO_SOURCE=git@github.com:odoo
+# run mkdir -p -m 0600 ~/.ssh && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+# run --mount=type=ssh git clone ...
 arg ODOO_VERSION=16.0
 arg ODOO_DATA_DIR=/var/lib/odoo
 env ODOO_VERSION=${ODOO_VERSION}
-# RUN --mount=type=ssh ... $ODOO_SOURCE
-# ENV ODOO_SOURCE=git@github.com:odoo
-# RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
-env ODOO_SOURCE=https://github.com/odoo
 env ODOO_BASEPATH=/opt/odoo
 run git clone --quiet --depth 1 "--branch=$ODOO_VERSION" $ODOO_SOURCE/odoo.git \
     ${ODOO_BASEPATH} && rm -rf ${ODOO_BASEPATH}/.git

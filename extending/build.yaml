@@ -25,8 +25,11 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        odoo-version: ["16.0"]
     env:
-      ODOO_VERSION: "16.0"
+      ODOO_VERSION: "${{ matrix.odoo-version }}"
       SSH_AUTH_SOCK: /tmp/ssh_agent.sock
 
     steps:

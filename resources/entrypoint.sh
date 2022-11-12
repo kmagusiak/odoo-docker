@@ -103,15 +103,23 @@ case "${1:-}" in
             for db in ${ODOO_DB_LIST}
             do
                 echo "ENTRY - Update database: ${db}"
-                click-odoo-update --ignore-core-addons -d "$db" -c "${ODOO_RC}" --log-level=error
+                click-odoo-update --ignore-core-addons -d "$db" -c "$ODOO_RC" --log-level=error
                 echo "ENTRY - Update database finished"
             done
+        fi
+
+        : ${DB_NAME:=odoo}
+        if [ -n "${INSTALL_MODULES:-}" ] && echo "ENTRY - Check DB" && ! PGDATABASE=${DB_NAME} PGTIMEOUT=2 wait-for-psql.py
+        then
+            echo "ENTRY - Initialize database $DB_NAME: ${INSTALL_MODULES}"
+            [ "${WITHOUT_DEMO:-True}" == T* ] && init_demo=--no-demo || init_demo=--demo
+            click-odoo-initdb -n "$DB_NAME" -m "$INSTALL_MODULES" -c "$ODOO_RC" --log-level=error $init_demo
         fi
 
         if [ "${DEBUGPY_ENABLE:-0}" == "1" ]
         then
             echo "ENTRY - Enable debugpy"
-            set -- python3 -m debugpy --listen "0.0.0.0:${DEBUGPY_PORT:-41234}" "$ODOO_BIN" "$@" --workers 0 --limit-time-real 100000
+            set -- python3 -m debugpy --listen "0.0.0.0:41234" "$ODOO_BIN" "$@" --workers 0 --limit-time-real 100000
         else
             set -- "$ODOO_BIN" "$@"
         fi
