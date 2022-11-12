@@ -16,28 +16,55 @@ https://docs.github.com/en/packages/working-with-a-github-packages-registry/work
 You can clone this repository and adapt the files as you wish.
 In the [extending](./extending/README.md) directory, you will find examples.
 
-## Backup and restore database
+## Running and tests
+
+Additionally to the `odoo` command which is set up to simply start the
+instance with the generated configuration, there are other commands available.
+
+- `odoo-update` installs and updates a list of modules
+- `odoo-test` (re)creates a new database and runs odoo tests
+- `odoo-getaddons.py` lists addon paths or addons with `-m`
 
 You can use [click-odoo-contrib] to backup, restore, copy databases and
 related jobs.
-It is installed on the odoo container, so you could just mount a
-`/mnt/backup` folder and use it for files.
-
-You can also use `click-odoo-initdb` or `click-odoo-update` to update
-installed modules.
-
-## Running and tests
+It provides also `click-odoo-initdb` or `click-odoo-update` to update
+installed modules and other useful tools.
+Some commands are added to the provided ones (until the PRs are accepted).
 
 	# run the container
 	docker-compose up
 
 	# inside the devcontainer
-	odoo --test-enable --stop-after-init -i template_module -d test_db_1
-	# alternatively
+	odoo shell  # get to the shell
+	odoo-update sale --load-languages=en_GB
+	# test using
 	odoo-test -t -a template_module -d test_db_1
 
 	# using docker-compose
 	docker-compose -f docker-compose.yaml -f docker-compose.test.yaml run --rm odoo
+
+Odoo binds user sessions to the URL in `web.base.url`.
+So, if you run containers on different ports, you should probably use
+`127.0.0.1`:port instead of `localhost`.
+
+## Connecting to the database
+
+Either get into the container directly with `docker-compose exec db bash`
+or, in the odoo container, `source /pg.env`.
+
+## Backup and restore database
+
+You can use `click-odoo-initdb` or `click-odoo-update` to update
+installed modules.
+
+If you restore from an SQL file (odoo.sh), you can use directly
+the postgres tools to restore the database.
+After restoring the database, you might want to run the *reset* command
+to set the password and check system properties.
+
+	createdb dbname
+	psql dbname < dump.sql
+	click-odoo-resetdb dbname --set-password admin --disable-mail
 
 # Image contents
 
@@ -66,7 +93,8 @@ Some other variables control the startup:
 - PIP_AUTO_INSTALL: discover *requirements.txt* files in addons folders and
   install them when starting the container (default: true)
 - UPGRADE_ENABLE: when starting, run `click-odoo-update` (default: false)
-- INSTALL_MODULES: modules to install when creating the database (default: none)
+  - INSTALL_MODULES: modules to install when creating the database (default: none)
+  - LOAD_LANGUAGES: languages to load during installation
 - DEBUGPY_ENABLE: run odoo with `debugpy`
 
 # Credits

@@ -84,7 +84,7 @@ case "${1:-}" in
             ODOO_BIN=$(which odoo-test)
             : ${BASE_MODULES:=base}
             echo "ENTRY - Enable testing"
-            UPGRADE_ENABLE=0
+            UPGRADE_ENABLE=0  # no updates during testing
         elif [[ "${2:-}" == "scaffold" ]]
         then
             shift
@@ -106,14 +106,12 @@ case "${1:-}" in
                 click-odoo-update --ignore-core-addons -d "$db" -c "$ODOO_RC" --log-level=error
                 echo "ENTRY - Update database finished"
             done
-        fi
-
-        : ${DB_NAME:=odoo}
-        if [ -n "${INSTALL_MODULES:-}" ] && echo "ENTRY - Check DB" && ! PGDATABASE=${DB_NAME} PGTIMEOUT=2 wait-for-psql.py
-        then
-            echo "ENTRY - Initialize database $DB_NAME: ${INSTALL_MODULES}"
-            [ "${WITHOUT_DEMO:-True}" == T* ] && init_demo=--no-demo || init_demo=--demo
-            click-odoo-initdb -n "$DB_NAME" -m "$INSTALL_MODULES" -c "$ODOO_RC" --log-level=error $init_demo
+            : ${DB_NAME:=odoo}
+            if [ -n "${INSTALL_MODULES:-}" ] && echo "ENTRY - Check DB exists" && ! PGDATABASE=${DB_NAME} PGTIMEOUT=2 wait-for-psql.py
+            then
+                echo "ENTRY - Initialize database $DB_NAME: ${INSTALL_MODULES}"
+                odoo-update "$INSTALL_MODULES" "--load-language=${INSTALL_LANGUAGES:-}"
+            fi
         fi
 
         if [ "${DEBUGPY_ENABLE:-0}" == "1" ]

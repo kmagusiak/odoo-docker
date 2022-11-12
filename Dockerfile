@@ -65,8 +65,16 @@ expose 8069 8071 8072
 # Copy entrypoint script and Odoo configuration file
 run pip install --prefix=/usr/local --no-cache-dir click-odoo-contrib debugpy
 copy resources/wait-for-psql.py resources/odoo-* /usr/local/bin/
-copy resources/entrypoint.sh resources/pg.env /
+copy resources/pg.env.sh /pg.env
+copy resources/entrypoint.sh /
 entrypoint ["/entrypoint.sh"]
+
+# Add click utils
+copy resources/click/* /usr/local/lib/python3.8/dist-packages/click_odoo_contrib/
+run cd /usr/local/bin \
+    && sed 's/initdb/listdb/' click-odoo-initdb > click-odoo-listdb \
+    && sed 's/initdb/resetdb/' click-odoo-initdb > click-odoo-resetdb \
+    && chmod 755 click-odoo-*
 
 ###############################
 # ODOO
