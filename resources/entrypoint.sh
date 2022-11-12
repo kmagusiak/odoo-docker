@@ -78,20 +78,29 @@ esac
 # dispatch the command
 case "${1:-}" in
     -- | odoo | odoo-* | "")
-        if [[ "${1:-}" == odoo-test ]]
-        then
+        INIT_DATABASE=0
+        case "${1:-}" in
+        -- | odoo | odoo-bin | "")
+            shift
+            INIT_DATABASE=1
+            ;;
+        odoo-test)
             shift
             ODOO_BIN=$(which odoo-test)
             : ${BASE_MODULES:=base}
             echo "ENTRY - Enable testing"
-            UPGRADE_ENABLE=0  # no updates during testing
-        elif [[ "${2:-}" == "scaffold" ]]
+            UPGRADE_ENABLE=0
+            ;;
+        *)
+            ODOO_BIN=$(which "$1")
+            shift
+            ;;
+        esac
+
+        if [[ "${1:-}" == "scaffold" ]]
         then
-            shift
-            exec odoo "$@"
+            exec "$ODOO_BIN" "$@"
             exit $?
-        else
-            shift
         fi
 
         echo "ENTRY - Wait for postgres"
@@ -106,6 +115,10 @@ case "${1:-}" in
                 click-odoo-update --ignore-core-addons -d "$db" -c "$ODOO_RC" --log-level=error
                 echo "ENTRY - Update database finished"
             done
+        fi
+
+        if [ "${INIT_DATABASE:-0}" == "1" ]
+        then
             : ${DB_NAME:=odoo}
             if [ -n "${INSTALL_MODULES:-}" ] && echo "ENTRY - Check DB exists" && ! PGDATABASE=${DB_NAME} PGTIMEOUT=2 wait-for-psql.py
             then
