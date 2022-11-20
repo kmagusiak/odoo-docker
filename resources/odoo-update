@@ -1,7 +1,13 @@
 #!/bin/bash
+# Run odoo and update a module list
+update_switch="-u"
 case "${1:-}" in
 "")
-	echo "Usage: $0 module1,module2 ...options"
+	echo "Usage: $0 module1,module2 [--install] ...options"
+	echo
+	echo "Just run odoo with installation options."
+	echo "Modules can be a list of modules or a path where to find addons."
+	echo "  --install indicates to install instead of update"
 	exit 1
 	;;
 -*)
@@ -15,6 +21,12 @@ case "${1:-}" in
 	modules=$1
 	shift;;
 esac
+case "${1:-}" in
+--install)
+	shift
+	update_switch="-i"
+	;;
+esac
 
-# install (if not there yet) and update (if already installed)
-exec odoo --no-http --workers=0 --stop-after-init -i "$modules" -u "$modules" "$@"
+# install or update the modules
+exec odoo --no-http --workers=0 --stop-after-init "$update_switch" "$modules" "$@"

@@ -36,7 +36,7 @@ Some commands are added to the provided ones (until the PRs are accepted).
 
 	# inside the devcontainer
 	odoo shell  # get to the shell
-	odoo-update sale --load-languages=en_GB
+	odoo-update sale --install --load-languages=en_GB
 	# test using
 	odoo-test -t -a template_module -d test_db_1
 
