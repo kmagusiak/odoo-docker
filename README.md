@@ -44,8 +44,8 @@ Some commands are added to the provided ones (until the PRs are accepted).
 	docker-compose -f docker-compose.yaml -f docker-compose.test.yaml run --rm odoo
 
 Odoo binds user sessions to the URL in `web.base.url`.
-So, if you run containers on different ports, you should probably use
-`127.0.0.1`:port instead of `localhost`.
+So, if you *run containers on different ports*, you should probably use
+`127.0.0.1:port` instead of `localhost`.
 
 ## Connecting to the database
 
@@ -61,10 +61,21 @@ If you restore from an SQL file (odoo.sh), you can use directly
 the postgres tools to restore the database.
 After restoring the database, you might want to run the *reset* command
 to set the password and check system properties.
+The password is set to "admin" for all users.
 
-	createdb dbname
-	psql dbname < dump.sql
-	click-odoo-resetdb dbname --set-password admin --disable-mail
+	# env
+	source .env
+	source /pg.env
+	DB_TEMPLATE=dump
+
+	# load the dump
+	dropdb --if-exists "$DB_TEMPLATE" && createdb "$DB_TEMPLATE"
+	psql "$DB_TEMPLATE" < dump.sql
+
+	# create your copy
+	dropdb --if-exists "$DB_NAME" && createdb "$DB_NAME" -T "$DB_TEMPLATE"
+	psql "$DB_NAME" < /usr/local/bin/odoo-reset-db.sql
+	click-odoo-update --ignore-core-addons
 
 # Image contents
 
