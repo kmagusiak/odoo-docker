@@ -2,7 +2,8 @@
 set -eu
 
 # set all variables
-source /pg.env
+export PGHOST PGPORT PGUSER PGPASSWORD
+[ -n "$PGHOST" ] || echo "ENTRY - PGHOST and possibly other PG variables are not set!"
 : ${ODOO_BASEPATH:=/opt/odoo}
 ODOO_BIN="$ODOO_BASEPATH/odoo-bin"
 : ${ODOO_BASE_ADDONS:=/opt/odoo-addons}

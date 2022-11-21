@@ -49,8 +49,8 @@ So, if you *run containers on different ports*, you should probably use
 
 ## Connecting to the database
 
-Either get into the container directly with `docker-compose exec db bash`
-or, in the odoo container, `source /pg.env`.
+Either get into the container directly with `docker-compose exec db bash`.
+The default postgresql environment variables are used: PGHOST, PGUSER, etc.
 
 ## Backup and restore database
 
@@ -65,7 +65,6 @@ The password is set to "admin" for all users.
 
 	# env
 	source .env
-	source /pg.env
 	DB_TEMPLATE=dump
 
 	# load the dump

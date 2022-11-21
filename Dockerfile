@@ -52,7 +52,7 @@ env ODOO_EXTRA_ADDONS=/mnt/extra-addons
 env PYTHON_DIST_PACKAGES=/usr/lib/python3/dist-packages
 run mkdir -p /etc/odoo \
     && mkdir -p "${ODOO_BASE_ADDONS}" "${ODOO_EXTRA_ADDONS}" "${ODOO_DATA_DIR}" \
-	&& useradd --system --no-create-home --base-dir "${ODOO_DATA_DIR}" odoo \
+	&& useradd --system --no-create-home --home-dir "${ODOO_DATA_DIR}" --shell /bin/bash odoo \
     && chown -R odoo:odoo /etc/odoo "${ODOO_BASE_ADDONS}" "${ODOO_EXTRA_ADDONS}" "${ODOO_DATA_DIR}" \
     && chmod 775 /etc/odoo "${ODOO_DATA_DIR}" \
     && echo "$ODOO_BASEPATH" > "$PYTHON_DIST_PACKAGES/odoo.pth" \
@@ -64,8 +64,11 @@ expose 8069 8071 8072
 
 # Copy entrypoint script and Odoo configuration file
 run pip install --prefix=/usr/local --no-cache-dir click-odoo click-odoo-contrib debugpy
+env PGHOST=db
+env PGPORT=5432
+env PGUSER=odoo
+env PGPASSWORD=odoo
 copy resources/wait-for-psql.py resources/odoo-* /usr/local/bin/
-copy resources/pg.env.sh /pg.env
 copy resources/entrypoint.sh /
 entrypoint ["/entrypoint.sh"]
 
