@@ -7,21 +7,21 @@ for a working dev environment.
 
 # Using the image
 
-## Building your image
+## Building your own image
+
+You can fork this repository and adapt the files as you wish.
+In the [extending](./extending/README.md) directory, you will find examples.
 
 A github action builds a docker image that can be used for development
 and testing.
 https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
 
-You can clone this repository and adapt the files as you wish.
-In the [extending](./extending/README.md) directory, you will find examples.
-
 ## Running and tests
 
-Additionally to the `odoo` command which is set up to simply start the
+Additionally to the `odoo` command which is set up to start the
 instance with the generated configuration, there are other commands available.
 
-- `odoo-update` installs and updates a list of modules
+- `odoo-update` installs or updates a list of modules
 - `odoo-test` (re)creates a new database and runs odoo tests
 - `odoo-getaddons.py` lists addon paths or addons with `-m`
 
@@ -29,12 +29,11 @@ You can use [click-odoo-contrib] to backup, restore, copy databases and
 related jobs.
 It provides also `click-odoo-initdb` or `click-odoo-update` to update
 installed modules and other useful tools.
-Some commands are added to the provided ones (until the PRs are accepted).
 
 	# run the container
 	docker-compose up
 
-	# inside the devcontainer
+	# inside the container
 	odoo shell  # get to the shell
 	odoo-update sale --install --load-languages=en_GB
 	# test using
@@ -50,12 +49,9 @@ So, if you *run containers on different ports*, you should probably use
 ## Connecting to the database
 
 Either get into the container directly with `docker-compose exec db bash`.
-The default postgresql environment variables are used: PGHOST, PGUSER, etc.
+The default postgresql environment variables are set: PGHOST, PGUSER, etc.
 
 ## Backup and restore database
-
-You can use `click-odoo-initdb` or `click-odoo-update` to update
-installed modules.
 
 If you restore from an SQL file (odoo.sh), you can use directly
 the postgres tools to restore the database.

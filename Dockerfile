@@ -77,4 +77,4 @@ entrypoint ["/entrypoint.sh"]
 from base as odoo
 user odoo
 cmd ["odoo-bin"]
-healthcheck CMD curl --fail http://127.0.0.1:8069/web_editor/static/src/xml/ace.xml || exit 1
+healthcheck cmd curl --fail http://127.0.0.1:8069/web_editor/static/src/xml/ace.xml || exit 1

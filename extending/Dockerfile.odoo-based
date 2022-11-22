@@ -32,10 +32,14 @@ run pip3 install --no-cache click-odoo-contrib debugpy
 copy --chown=odoo:odoo ./resources/entrypoint.sh /
 copy --chown=odoo:odoo ./resources/odoo-* /usr/local/bin/
 entrypoint ["/entrypoint.sh"]
+env PGHOST=db
+env PGPORT=5432
+env PGUSER=odoo
+env PGPASSWORD=odoo
 
 ###############################
 # ODOO
 from base as odoo
 user odoo
 cmd ["odoo-bin"]
-healthcheck CMD curl --fail http://127.0.0.1:8069/web_editor/static/src/xml/ace.xml || exit 1
+healthcheck cmd curl --fail http://127.0.0.1:8069/web_editor/static/src/xml/ace.xml || exit 1
