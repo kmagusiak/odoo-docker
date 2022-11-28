@@ -1,4 +1,4 @@
-from ubuntu:20.04 as base
+from ubuntu:22.04 as base
 shell ["/bin/bash", "-xo", "pipefail", "-c"]
 # https://www.odoo.com/documentation/master/administration/install.html
 
@@ -10,7 +10,7 @@ env LANG C.UTF-8
 # - Odoo's dependencies
 # - postgres-client
 # - rtlcss (right-to-left text, skipped)
-# - wkhtmltox and fonts dependencies
+# - wkhtmltox and fonts dependencies (unzip for wkhtmltox)
 # - system tools
 run apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -22,11 +22,19 @@ run apt-get update && \
         fontconfig libx11-6 libxext6 libxrender1 \
         xfonts-75dpi xfonts-base \
         ca-certificates curl git openssh-client \
+        unzip \
     && rm -rf /var/lib/apt/lists/*
-run curl -o wkhtmltox.deb -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.focal_amd64.deb \
-    && echo 'ae4e85641f004a2097621787bf4381e962fb91e1 wkhtmltox.deb' | sha1sum -c - \
+
+# wkhtmltopdf https://github.com/wkhtmltopdf/packaging/issues/114 for Jammy (Ubuntu 22.04)
+run curl -o wkhtmltox.zip -sSL https://github.com/wkhtmltopdf/packaging/files/8632951/wkhtmltox_0.12.5-1.jammy_amd64.zip \
+    && unzip wkhtmltox.zip && rm wkhtmltox.zip && mv wkhtmlto*.deb wkhtmltox.deb \
     && apt-get install -y --no-install-recommends ./wkhtmltox.deb \
     && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
+# alternative installation version (commented because libssl1.1 is missing - libssl3 is installed)
+#run curl -o wkhtmltox.deb -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.buster_amd64.deb \
+#    && echo 'ea8277df4297afc507c61122f3c349af142f31e5 wkhtmltox.deb' | sha1sum -c - \
+#    && apt-get install -y --no-install-recommends ./wkhtmltox.deb \
+#    && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
 
 # Install/Clone Odoo
 # If using HTTPS clone:
