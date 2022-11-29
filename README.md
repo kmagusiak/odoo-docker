@@ -85,7 +85,8 @@ The password is set to "admin" for all users.
 
 Starting from an Ubuntu image, we install the required tools and clone
 the official Odoo repository.
-We install `click-odoo-contrib` and `debugpy`;
+We install various tools such as `click-odoo-contrib` and `debugpy`;
+other development tools are pre-installed for testing;
 replace the entrypoint and add a *health check* to the image.
 
 You can set up environment variables in `.env` file.

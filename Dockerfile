@@ -71,7 +71,9 @@ volume ["${ODOO_DATA_DIR}"]
 expose 8069 8071 8072
 
 # Copy entrypoint script and Odoo configuration file
-run pip install --prefix=/usr/local --no-cache-dir click-odoo click-odoo-contrib debugpy
+run pip install --prefix=/usr/local --no-cache-dir \
+    click-odoo click-odoo-contrib debugpy \
+    black flake8 isort pylint-odoo pytest-odoo
 env PGHOST=db
 env PGPORT=5432
 env PGUSER=odoo

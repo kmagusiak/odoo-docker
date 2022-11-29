@@ -9,5 +9,6 @@ debugpy
 ipython
 jupyterlab
 
-# unit testing (chrome)
-websocket-client
+# unit testing
+pytest-odoo
+websocket-client  # for chrome
