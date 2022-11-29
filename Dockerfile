@@ -72,6 +72,7 @@ expose 8069 8071 8072
 
 # Copy entrypoint script and Odoo configuration file
 run pip install --prefix=/usr/local --no-cache-dir \
+    pdfminer.six \
     click-odoo click-odoo-contrib debugpy \
     black flake8 isort pylint-odoo pytest-odoo
 env PGHOST=db
