@@ -49,7 +49,7 @@ env ODOO_VERSION=${ODOO_VERSION}
 env ODOO_BASEPATH=/opt/odoo
 run git clone --quiet --depth 1 "--branch=$ODOO_VERSION" $ODOO_SOURCE/odoo.git \
     ${ODOO_BASEPATH} && rm -rf ${ODOO_BASEPATH}/.git
-run pip install --prefix=/usr/local --no-cache-dir --upgrade -r ${ODOO_BASEPATH}/requirements.txt
+run pip install --prefix=/usr --no-cache-dir --upgrade -r ${ODOO_BASEPATH}/requirements.txt
 
 # Create user and mounts
 # /var/lib/odoo for filestore and HOME
@@ -70,11 +70,16 @@ volume ["${ODOO_DATA_DIR}"]
 # Expose Odoo services
 expose 8069 8071 8072
 
-# Copy entrypoint script and Odoo configuration file
-run pip install --prefix=/usr/local --no-cache-dir \
+# Add additional python libraries
+# - cryptography >= 38 incompatible with openssl==19 in odoo
+# - click tools
+# - development tools
+run pip install --prefix=/usr --no-cache-dir \
     pdfminer.six \
+    'cryptography<38' \
     click-odoo click-odoo-contrib debugpy \
     black flake8 isort pylint-odoo pytest-odoo
+# Copy entrypoint script and Odoo configuration file
 env PGHOST=db
 env PGPORT=5432
 env PGUSER=odoo
