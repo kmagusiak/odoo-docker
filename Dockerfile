@@ -71,11 +71,12 @@ volume ["${ODOO_DATA_DIR}"]
 expose 8069 8071 8072
 
 # Add additional python libraries
+# - optional Odoo libraries (for most commonly used modules)
 # - cryptography >= 38 incompatible with openssl==19 in odoo
 # - click tools
 # - development tools
 run pip install --prefix=/usr --no-cache-dir \
-    pdfminer.six \
+    pdfminer.six phonenumbers \
     'cryptography<38' \
     click-odoo click-odoo-contrib debugpy \
     black flake8 isort pylint-odoo pytest-odoo
