@@ -63,7 +63,8 @@ run mkdir -p /etc/odoo \
 	&& useradd --system --no-create-home --home-dir "${ODOO_DATA_DIR}" --shell /bin/bash odoo \
     && chown -R odoo:odoo /etc/odoo "${ODOO_BASE_ADDONS}" "${ODOO_EXTRA_ADDONS}" "${ODOO_DATA_DIR}" \
     && chmod 775 /etc/odoo "${ODOO_DATA_DIR}" \
-    && echo "$ODOO_BASEPATH" > "$PYTHON_DIST_PACKAGES/odoo.pth" \
+    && echo "${ODOO_BASEPATH}" > "$PYTHON_DIST_PACKAGES/odoo.pth" \
+    && ln -s "${ODOO_BASEPATH}/odoo-bin" /usr/bin/odoo-bin \
     && ln -s "${ODOO_BASEPATH}/odoo-bin" /usr/bin/odoo
 volume ["${ODOO_DATA_DIR}"]
 

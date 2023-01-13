@@ -10,7 +10,7 @@ ODOO_BIN="$ODOO_BASEPATH/odoo-bin"
 : ${ODOO_EXTRA_ADDONS:=/mnt/extra-addons}
 EXTRA_ADDONS_PATHS=$(odoo-getaddons.py ${ODOO_EXTRA_ADDONS} ${ODOO_BASE_ADDONS} ${ODOO_BASEPATH})
 
-if [ ! -f ${ODOO_RC} ]
+if [ ! -f "${ODOO_RC}" ]
 then
     echo "ENTRY - Generate $ODOO_RC"
     cat > $ODOO_RC <<EOF
