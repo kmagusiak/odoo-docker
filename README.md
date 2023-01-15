@@ -18,11 +18,11 @@ https://docs.github.com/en/packages/working-with-a-github-packages-registry/work
 
 ## Running and tests
 
-Additionally to the `odoo` command which is set up to start the
+Additionally to the `odoo-bin` command which is set up to start the
 instance with the generated configuration, there are other commands available.
 
 - `odoo-update` installs or updates a list of modules
-- `odoo-test` (re)creates a new database and runs odoo tests
+- `odoo-test` (re)creates a new database and runs Odoo tests
 - `odoo-getaddons.py` lists addon paths or addons with `-m`
 
 You can use [click-odoo-contrib] to backup, restore, copy databases and
@@ -48,29 +48,11 @@ So, if you *run containers on different ports*, you should probably use
 
 ## Connecting to the database
 
-Either get into the container directly with `docker-compose exec db bash`.
+Either get into the container directly with `docker-compose exec db bash` or
+use `psql` from the Odoo container.
+
 The default postgresql environment variables are set: PGHOST, PGUSER, etc.
-
-## Backup and restore database
-
-If you restore from an SQL file (odoo.sh), you can use directly
-the postgres tools to restore the database.
-After restoring the database, you might want to run the *reset* command
-to set the password and check system properties.
-The password is set to "admin" for all users.
-
-	# env
-	source .env
-	DB_TEMPLATE=dump
-
-	# load the dump
-	dropdb --if-exists "$DB_TEMPLATE" && createdb "$DB_TEMPLATE"
-	psql "$DB_TEMPLATE" < dump.sql
-
-	# create your copy
-	dropdb --if-exists "$DB_NAME" && createdb "$DB_NAME" -T "$DB_TEMPLATE"
-	psql "$DB_NAME" < /usr/local/bin/odoo-reset-db.sql
-	click-odoo-update --ignore-core-addons
+You can use directly the postgres tools to restore the database.
 
 # Image contents
 
@@ -86,11 +68,10 @@ The password is set to "admin" for all users.
 Starting from an Ubuntu image, we install the required tools and clone
 the official Odoo repository.
 We install various tools such as `click-odoo-contrib` and `debugpy`;
-other development tools are pre-installed for testing;
-replace the entrypoint and add a *health check* to the image.
+other development tools are pre-installed for testing.
 
 You can set up environment variables in `.env` file.
-These are loaded into the odoo container and a configuration file is generated
+These are loaded into the Odoo container and a configuration file is generated
 every time the container starts at `/etc/odoo/odoo.conf`.
 
 Odoo addons path is discovered from the paths where addons can be built.
