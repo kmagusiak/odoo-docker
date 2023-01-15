@@ -41,13 +41,12 @@ run curl -o wkhtmltox.zip -sSL https://github.com/wkhtmltopdf/packaging/files/86
 arg ODOO_SOURCE=https://github.com/odoo
 # If using SSH clone:
 # arg ODOO_SOURCE=git@github.com:odoo
-# run mkdir -p -m 0600 ~/.ssh && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
-# run --mount=type=ssh git clone ...
 arg ODOO_VERSION=16.0
 arg ODOO_DATA_DIR=/var/lib/odoo
 env ODOO_VERSION=${ODOO_VERSION}
 env ODOO_BASEPATH=/opt/odoo
-run git clone --quiet --depth 1 "--branch=$ODOO_VERSION" $ODOO_SOURCE/odoo.git \
+run mkdir -p -m 0600 ~/.ssh && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+run --mount=type=ssh git clone --quiet --depth 1 "--branch=$ODOO_VERSION" $ODOO_SOURCE/odoo.git \
     ${ODOO_BASEPATH} && rm -rf ${ODOO_BASEPATH}/.git
 run pip install --prefix=/usr --no-cache-dir --upgrade -r ${ODOO_BASEPATH}/requirements.txt
 
@@ -96,3 +95,18 @@ from base as odoo
 user odoo
 cmd ["odoo-bin"]
 healthcheck cmd curl --fail http://127.0.0.1:8069/web_editor/static/src/xml/ace.xml || exit 1
+
+###############################
+# ENTERPRISE
+from odoo as enterprise
+user root
+
+# Clone Odoo themes
+run --mount=type=ssh git clone --quiet --depth 1 "--branch=$ODOO_VERSION" $ODOO_SOURCE/design-themes.git \
+    ${ODOO_BASE_ADDONS}/odoo-themes && rm -rf ${ODOO_BASE_ADDONS}/odoo-themes/.git
+
+# Clone Odoo enterprise sources
+run --mount=type=ssh git clone --quiet --depth 1 "--branch=$ODOO_VERSION" $ODOO_SOURCE/enterprise.git \
+    ${ODOO_BASE_ADDONS}/enterprise && rm -rf ${ODOO_BASE_ADDONS}/enterprise/.git
+
+user odoo

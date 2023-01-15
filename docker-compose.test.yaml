@@ -5,7 +5,6 @@ services:
   odoo:
     restart: "no"
     environment:
-      - LOG_LEVEL=info
       - WITHOUT_DEMO=False
       - PIP_AUTO_INSTALL=1
       - DEBUGPY_ENABLE=0
