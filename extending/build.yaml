@@ -1,5 +1,5 @@
 name: Docker build and push
-# with SSH_KEY secret
+# with secret.SSH_KEY
 
 on:
   push:

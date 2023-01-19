@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - master
+  pull_request:
+    branches:
+      - master
   schedule:
     # run after official build (which is Friday evening)
     # run once a month
@@ -43,6 +46,7 @@ jobs:
         context: .
         file: Dockerfile
         target: odoo
-        build-args: ODOO_VERSION=${{ env.ODOO_VERSION }}
+        build-args: |
+          ODOO_VERSION=${{ env.ODOO_VERSION }}
         tags: ghcr.io/${{ github.repository }}:${{ env.ODOO_VERSION }}
-        push: true
+        push: ${{ github.event_name != 'pull_request' }}
