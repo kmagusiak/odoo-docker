@@ -1,5 +1,5 @@
 name: Docker build and push
-# with SSH_KEY secret
+# with secret.SSH_KEY
 
 on:
   push:
@@ -54,7 +54,9 @@ jobs:
         context: .
         file: Dockerfile.enterprise
         target: enterprise
-        build-args: ODOO_VERSION=${{ env.ODOO_VERSION }} ODOO_SOURCE=git@github.com:odoo
+        build-args: |
+          ODOO_VERSION=${{ env.ODOO_VERSION }}
+          ODOO_SOURCE=git@github.com:odoo
         ssh: default=${{ env.SSH_AUTH_SOCK }}
         tags: ghcr.io/${{ github.repository }}:${{ env.ODOO_VERSION }}
         push: ${{ github.event_name != 'pull_request' }}

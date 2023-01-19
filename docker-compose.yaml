@@ -10,12 +10,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: odoo
+      target: ${DOCKER_TARGET}
     env_file: .env
     environment:
       PGHOST: db
       PGPORT: 5432
-    
+
     restart: unless-stopped
 
     ports:

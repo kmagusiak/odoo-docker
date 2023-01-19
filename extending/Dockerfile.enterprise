@@ -1,5 +1,6 @@
 arg ODOO_VERSION=16.0
 from ghcr.io/kmagusiak/odoo-docker:${ODOO_VERSION} as base
+user root
 
 # ssh access
 arg ODOO_SOURCE=git@github.com:odoo
