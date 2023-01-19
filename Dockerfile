@@ -4,6 +4,8 @@ shell ["/bin/bash", "-xo", "pipefail", "-c"]
 
 # Generate locale C.UTF-8 for postgres and general locale data
 env LANG C.UTF-8
+# Send python output directly to the stdout
+env PYTHONUNBUFFERED=1
 
 # Install dependencies (non-interactive flag for tzdata)
 # - python and build essentials
@@ -67,9 +69,6 @@ run mkdir -p /etc/odoo \
     && ln -s "${ODOO_BASEPATH}/odoo-bin" /usr/bin/odoo
 volume ["${ODOO_DATA_DIR}"]
 
-# Expose Odoo services
-expose 8069 8071 8072
-
 # Add additional python libraries
 # - optional Odoo libraries (for most commonly used modules)
 # - cryptography >= 38 incompatible with openssl==19 in odoo
@@ -80,14 +79,15 @@ run pip install --prefix=/usr --no-cache-dir \
     'cryptography<38' \
     click-odoo click-odoo-contrib debugpy \
     black flake8 isort pylint-odoo pytest-odoo
-# Copy entrypoint script and Odoo configuration file
+# Copy entrypoint script and set entry points
+copy resources/wait-for-psql.py resources/odoo-* /usr/local/bin/
+copy resources/entrypoint.sh /
+entrypoint ["/entrypoint.sh"]
+expose 8069 8071 8072
 env PGHOST=db
 env PGPORT=5432
 env PGUSER=odoo
 env PGPASSWORD=odoo
-copy resources/wait-for-psql.py resources/odoo-* /usr/local/bin/
-copy resources/entrypoint.sh /
-entrypoint ["/entrypoint.sh"]
 
 ###############################
 # ODOO
