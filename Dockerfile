@@ -50,7 +50,10 @@ env ODOO_BASEPATH=/opt/odoo
 run mkdir -p -m 0600 ~/.ssh && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 run --mount=type=ssh git clone --quiet --depth 1 "--branch=$ODOO_VERSION" $ODOO_SOURCE/odoo.git \
     ${ODOO_BASEPATH} && rm -rf ${ODOO_BASEPATH}/.git
-run pip install --prefix=/usr --no-cache-dir --upgrade -r ${ODOO_BASEPATH}/requirements.txt
+# cryptography >= 38 is incompatible with openssl==19 in odoo
+run pip install --prefix=/usr --no-cache-dir --upgrade \
+    'cryptography<38' \
+    -r ${ODOO_BASEPATH}/requirements.txt
 
 # Create user and mounts
 # /var/lib/odoo for filestore and HOME
@@ -65,17 +68,16 @@ run mkdir -p /etc/odoo \
     && chown -R odoo:odoo /etc/odoo "${ODOO_BASE_ADDONS}" "${ODOO_EXTRA_ADDONS}" "${ODOO_DATA_DIR}" \
     && chmod 775 /etc/odoo "${ODOO_DATA_DIR}" \
     && echo "${ODOO_BASEPATH}" > "$PYTHON_DIST_PACKAGES/odoo.pth" \
-    && ln -s "${ODOO_BASEPATH}/odoo-bin" /usr/bin/odoo-bin \
-    && ln -s "${ODOO_BASEPATH}/odoo-bin" /usr/bin/odoo
+    && ln -s "${ODOO_BASEPATH}/odoo-bin" /usr/bin/odoo-bin
 volume ["${ODOO_DATA_DIR}"]
 
 # Add additional python libraries
 # - optional Odoo libraries (for most commonly used modules)
-# - cryptography >= 38 incompatible with openssl==19 in odoo
+# - versions compatibility
 # - click tools
 # - development tools
 run pip install --prefix=/usr --no-cache-dir \
-    pdfminer.six phonenumbers \
+    pdfminer.six phonenumbers python-magic python-slugify \
     'cryptography<38' \
     click-odoo click-odoo-contrib debugpy \
     black flake8 isort pylint-odoo pytest-odoo

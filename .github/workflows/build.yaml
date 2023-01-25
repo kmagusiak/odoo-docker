@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        odoo-version: ["14.0", "16.0"]
+        odoo-version: ["14.0", "15.0", "16.0"]
     env:
       ODOO_VERSION: "${{ matrix.odoo-version }}"
 
