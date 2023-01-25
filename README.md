@@ -16,6 +16,10 @@ A github action builds a docker image that can be used for development
 and testing.
 https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
 
+You can add a *health check*.
+
+	healthcheck cmd curl --fail http://127.0.0.1:8069/web_editor/static/src/xml/ace.xml || exit 1
+
 ## Running and tests
 
 Additionally to the `odoo-bin` command which is set up to start the
@@ -34,9 +38,8 @@ installed modules and other useful tools.
 	docker-compose up
 
 	# inside the container
-	odoo shell  # get to the shell
+	odoo-bin shell  # get to the shell
 	odoo-update sale --install --load-languages=en_GB
-	# test using
 	odoo-test -t -a template_module -d test_db_1
 
 	# using docker-compose

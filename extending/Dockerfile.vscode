@@ -5,12 +5,14 @@ from ghcr.io/kmagusiak/odoo-docker:${ODOO_VERSION} as base
 from base as vscode
 user root
 run apt-get update \
-	&& apt-get install -y --no-install-recommends git htop less openssh-client vim \
-	&& apt-get install -y --no-install-recommends libxml2-utils \
-	&& apt-get install -y --no-install-recommends chromium-driver
+	&& apt-get install -y --no-install-recommends \
+	libxml2-utils \
+	git htop less openssh-client vim
+
+# add chrome if possible, but chromium requires snap on Ubuntu
 
 add requirements-dev.txt /tmp
-run true
+run cd /tmp
 	&& pip3 install --no-cache invoke -r /tmp/requirements-dev.txt \
 	&& rm -f /tmp/requirements-dev.txt
 
