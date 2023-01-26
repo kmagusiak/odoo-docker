@@ -49,4 +49,23 @@ jobs:
         build-args: |
           ODOO_VERSION=${{ env.ODOO_VERSION }}
         tags: ghcr.io/${{ github.repository }}:${{ env.ODOO_VERSION }}
+        load: true
+        push: false
+
+    - name: Run image test
+      run: |
+        cat > Dockerfile.test <<EOF
+        FROM ghcr.io/${{ github.repository }}:${{ env.ODOO_VERSION }} as odoo
+        EOF
+        DOCKERFILE=Dockerfile.test docker-compose -f docker-compose.yaml -f docker-compose.test.yaml run --rm odoo odoo-update base --install
+
+    - name: Publish Odoo Community Docker image
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        file: Dockerfile
+        target: odoo
+        build-args: |
+          ODOO_VERSION=${{ env.ODOO_VERSION }}
+        tags: ghcr.io/${{ github.repository }}:${{ env.ODOO_VERSION }}
         push: ${{ github.event_name != 'pull_request' }}

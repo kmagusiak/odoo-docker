@@ -123,7 +123,15 @@ def main(args=None):
     create_database(dbname, base_addons, template=arg.get('template'))
     # update arguments and run odoo
     print_time('Start Test')
-    args = ["odoo", "--stop-after-init"] + arg['odoo_args'] + ["-d", dbname, "-i", ','.join(addons)]
+    args = [
+        "odoo-bin",
+        "--stop-after-init",
+        *arg['odoo_args'],
+        "-d",
+        dbname,
+        "-i",
+        ','.join(addons),
+    ]
     sys.argv = args
     odoo.cli.main()
     print_time('Done')

@@ -29,4 +29,4 @@ case "${1:-}" in
 esac
 
 # install or update the modules
-exec odoo --no-http --workers=0 --stop-after-init "$update_switch" "$modules" "$@"
+exec odoo-bin --no-http --workers=0 --stop-after-init "$update_switch" "$modules" "$@"
