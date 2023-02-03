@@ -77,7 +77,7 @@ volume ["${ODOO_DATA_DIR}"]
 # - click tools
 # - development tools
 run pip install --prefix=/usr --no-cache-dir \
-    pdfminer.six phonenumbers python-magic python-slugify \
+    geoip2 pdfminer.six phonenumbers python-magic python-slugify \
     'cryptography<38' \
     click-odoo click-odoo-contrib debugpy \
     black flake8 isort pylint-odoo pytest-odoo
