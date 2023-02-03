@@ -51,6 +51,7 @@ run mkdir -p -m 0600 ~/.ssh && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hos
 run --mount=type=ssh git clone --quiet --depth 1 "--branch=$ODOO_VERSION" $ODOO_SOURCE/odoo.git \
     ${ODOO_BASEPATH} && rm -rf ${ODOO_BASEPATH}/.git
 # cryptography >= 38 is incompatible with openssl==19 in odoo
+# - version 14.0 incompatibility with werkzeug 2.x (selected later)
 run pip install --prefix=/usr --no-cache-dir --upgrade \
     'cryptography<38' \
     -r ${ODOO_BASEPATH}/requirements.txt
@@ -79,6 +80,7 @@ volume ["${ODOO_DATA_DIR}"]
 run pip install --prefix=/usr --no-cache-dir \
     geoip2 pdfminer.six phonenumbers python-magic python-slugify \
     'cryptography<38' \
+    $([ "$ODOO_VERSION" != 14.0 ] || echo 'Werkzeug==0.16.1') \
     click-odoo click-odoo-contrib debugpy \
     black flake8 isort pylint-odoo pytest-odoo
 # Copy entrypoint script and set entry points
