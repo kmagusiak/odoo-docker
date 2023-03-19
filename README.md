@@ -16,7 +16,7 @@ A github action builds a docker image that can be used for development
 and testing.
 https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
 
-You can add a *health check*.
+You can add a *health check* in you need it for production.
 
 	healthcheck cmd curl --fail http://127.0.0.1:8069/web_editor/static/src/xml/ace.xml || exit 1
 
@@ -29,11 +29,6 @@ instance with the generated configuration, there are other commands available.
 - `odoo-test` (re)creates a new database and runs Odoo tests
 - `odoo-getaddons.py` lists addon paths or addons with `-m`
 
-You can use [click-odoo-contrib] to backup, restore, copy databases and
-related jobs.
-It provides also `click-odoo-initdb` or `click-odoo-update` to update
-installed modules and other useful tools.
-
 	# run the container
 	docker-compose up
 
@@ -42,11 +37,11 @@ installed modules and other useful tools.
 	odoo-update sale --install --load-languages=en_GB
 	odoo-test -t -a template_module -d test_db_1
 
-	# using docker-compose
+	# test using docker-compose
 	docker-compose -f docker-compose.yaml -f docker-compose.test.yaml run --rm odoo
 
 Odoo binds user sessions to the URL in `web.base.url`.
-So, if you *run containers on different ports*, you should probably use
+If you *run containers on different ports*, you may need to use
 `127.0.0.1:port` instead of `localhost`.
 
 ## Connecting to the database
@@ -61,10 +56,10 @@ You can use directly the postgres tools to restore the database.
 
 ## Paths
 
-- ODOO_BASEPATH (`/opt/odoo`) where you find Odoo source code
-- ODOO_BASE_ADDONS where you find addons bundled in the image
+- `ODOO_BASEPATH` (`/opt/odoo`) where you find Odoo source code
+- `ODOO_BASE_ADDONS` where you find addons bundled in the image
   like *enterprise*, *themes*, etc.
-- ODOO_EXTRA_ADDONS where you find your addons
+- `ODOO_EXTRA_ADDONS` where you can mount your addons
 
 ## The Dockerfile
 
@@ -79,14 +74,14 @@ every time the container starts at `/etc/odoo/odoo.conf`.
 
 Odoo addons path is discovered from the paths where addons can be built.
 Some other variables control the startup:
-- DB_NAME: the default database is `odoo`.
-- WITHOUT_DEMO: don't install demo data (default: true)
-- PIP_AUTO_INSTALL: discover *requirements.txt* files in addons folders and
+- `DB_NAME`: the default database is `odoo`.
+- `WITHOUT_DEMO`: don't install demo data (default: false)
+- `PIP_AUTO_INSTALL`: discover *requirements.txt* files in addons folders and
   install them when starting the container (default: true)
-- UPGRADE_ENABLE: when starting, run `click-odoo-update` (default: false)
-  - INSTALL_MODULES: modules to install when creating the database (default: none)
-  - LOAD_LANGUAGES: languages to load during installation
-- DEBUGPY_ENABLE: run odoo with `debugpy`
+- `UPGRADE_ENABLE`: when starting, run `click-odoo-update` (default: false)
+  - `INSTALL_MODULES`: modules to install when creating the database (default: none)
+  - `LOAD_LANGUAGES`: languages to load during installation
+- `DEBUGPY_ENABLE`: run odoo with `debugpy` for remote debugging
 
 # Credits
 

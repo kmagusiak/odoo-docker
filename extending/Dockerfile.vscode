@@ -3,13 +3,10 @@ from ghcr.io/kmagusiak/odoo-docker:${ODOO_VERSION} as base
 
 # VSCODE (tools for development)
 from base as vscode
-user root
 run apt-get update \
 	&& apt-get install -y --no-install-recommends \
 	libxml2-utils \
 	git htop less openssh-client vim
-
-# add chrome if possible, but chromium requires snap on Ubuntu
 
 add requirements-dev.txt /tmp
 run cd /tmp

@@ -1,4 +1,4 @@
-from ubuntu:22.04 as base
+from ubuntu:22.04 as system
 shell ["/bin/bash", "-xo", "pipefail", "-c"]
 # https://www.odoo.com/documentation/master/administration/install.html
 
@@ -38,6 +38,7 @@ run curl -o wkhtmltox.zip -sSL https://github.com/wkhtmltopdf/packaging/files/86
 #    && apt-get install -y --no-install-recommends ./wkhtmltox.deb \
 #    && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
 
+from system as base
 # Install/Clone Odoo
 # If using HTTPS clone:
 arg ODOO_SOURCE=https://github.com/odoo
