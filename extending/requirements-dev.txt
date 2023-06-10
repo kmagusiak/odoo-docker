@@ -7,8 +7,10 @@ pylint-odoo
 # debugging and tools
 debugpy
 ipython
-jupyterlab
 
-# unit testing
+# fix version for ipython (python 3.10.6)
+prompt-toolkit==3.0.28
+
+# unit testing (chrome)
 pytest-odoo
 websocket-client  # for chrome

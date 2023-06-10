@@ -101,6 +101,20 @@ user odoo
 cmd ["odoo-bin"]
 
 ###############################
+# DEVELOPMENT
+from odoo as odoodev
+user root
+
+run apt-get update \
+	&& apt-get install -y --no-install-recommends \
+	bash-completion gettext git htop less openssh-client vim
+run pip install --prefix=/usr --no-cache-dir \
+    prompt-toolkit==3.0.28 \
+    debugpy ipython
+
+user odoo
+
+###############################
 # ENTERPRISE
 from odoo as enterprise
 user root

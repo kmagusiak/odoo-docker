@@ -2,7 +2,7 @@
 # Run odoo and update a module list
 update_switch="-u"
 case "${1:-}" in
-"")
+""|-h)
 	echo "Usage: $0 module1,module2 [--install] ...options"
 	echo
 	echo "Just run odoo with installation options."
