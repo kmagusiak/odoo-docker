@@ -8,9 +8,9 @@ on:
     branches:
       - master
   schedule:
-    # run after official build (which is Friday evening)
+    # info: official builds are Friday evening
     # run once a month
-    - cron: '5 4 1-7 * 6'
+    - cron: '5 4 10 * *'
 
 permissions:
   contents: read
