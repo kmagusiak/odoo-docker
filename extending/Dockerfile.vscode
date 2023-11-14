@@ -1,4 +1,4 @@
-arg ODOO_VERSION=16.0
+arg ODOO_VERSION=17.0
 from ghcr.io/kmagusiak/odoo-docker:${ODOO_VERSION} as base
 
 # VSCODE (tools for development)
