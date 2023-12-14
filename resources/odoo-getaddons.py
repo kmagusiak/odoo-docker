@@ -8,15 +8,19 @@ With -m flag, will return a list of modules names instead.
 """
 
 import ast
+import logging
 import os
 import sys
 
-MANIFEST_FILES = [
-    '__manifest__.py',
-    '__odoo__.py',
-    '__openerp__.py',
-    '__terp__.py',
-]
+MANIFEST_FILES = set(
+    [
+        '__manifest__.py',
+        '__odoo__.py',
+        '__openerp__.py',
+        '__terp__.py',
+    ]
+)
+_log = logging.getLogger('odoo-getaddons')
 
 
 def is_module(path):
@@ -25,12 +29,13 @@ def is_module(path):
 
     if not os.path.isdir(path):
         return False
-    files = os.listdir(path)
-    filtered = [x for x in files if x in (MANIFEST_FILES + ['__init__.py'])]
-    if len(filtered) == 2 and '__init__.py' in filtered:
-        return os.path.join(path, next(x for x in filtered if x != '__init__.py'))
-    else:
+    files = set(os.listdir(path))
+    # check python module
+    if '__init__.py' not in files:
         return False
+    # check manifest
+    files &= MANIFEST_FILES
+    return os.path.join(path, files.pop()) if len(files) == 1 else False
 
 
 def get_modules(path, depth=1):
@@ -49,7 +54,12 @@ def get_modules_info(path, depth=1):
         for module in os.listdir(path):
             manifest_path = is_module(os.path.join(path, module))
             if manifest_path:
-                manifest = ast.literal_eval(open(manifest_path).read())
+                try:
+                    with open(manifest_path) as f:
+                        manifest = ast.literal_eval(f.read())
+                except Exception:
+                    _log.warning('Failed to read the manifest %s', manifest_path, exc_info=True)
+                    manifest = {}
                 if manifest.get('installable', True):
                     modules[module] = {
                         'application': manifest.get('application'),
@@ -63,8 +73,7 @@ def get_modules_info(path, depth=1):
 
 
 def is_addons(path):
-    res = get_modules(path) != []
-    return res
+    return get_modules(path) != []
 
 
 def get_addons(path, depth=3, full_search=True):
