@@ -13,6 +13,7 @@ run cd /tmp
 	&& pip3 install --no-cache -r /tmp/requirements-dev.txt \
 	&& rm -f /tmp/requirements-dev.txt
 
+# use a single user for both running the container and devcontainer
 arg DEV_UID=1000
 run useradd --uid "${DEV_UID}" -G odoo --create-home vscode \
 	&& echo "root:${ADMIN_PASSWORD}" | chpasswd \

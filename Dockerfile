@@ -82,8 +82,10 @@ run pip install --prefix=/usr --no-cache-dir \
     geoip2 pdfminer.six phonenumbers python-magic python-slugify \
     'cryptography<38' \
     $([ "$ODOO_VERSION" != 14.0 ] || echo 'Werkzeug==0.16.1') \
-    click-odoo click-odoo-contrib debugpy \
-    black flake8 isort pylint-odoo pytest-odoo
+    click-odoo click-odoo-contrib \
+    debugpy py-spy \
+    black flake8 isort pylint-odoo \
+    pytest-odoo websocket-client
 # Copy entrypoint script and set entry points
 copy resources/wait-for-psql.py resources/odoo-* /usr/local/bin/
 copy resources/entrypoint.sh /
@@ -107,7 +109,7 @@ user root
 
 run apt-get update \
 	&& apt-get install -y --no-install-recommends \
-	bash-completion gettext git htop less openssh-client vim
+	    bash-completion gettext git htop less openssh-client vim
 run pip install --prefix=/usr --no-cache-dir \
     prompt-toolkit==3.0.28 \
     debugpy ipython

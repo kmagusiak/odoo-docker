@@ -18,7 +18,9 @@ https://docs.github.com/en/packages/working-with-a-github-packages-registry/work
 
 You can add a *health check* in you need it for production.
 
-	healthcheck cmd curl --fail http://127.0.0.1:8069/web_editor/static/src/xml/ace.xml || exit 1
+```
+healthcheck cmd curl --fail http://127.0.0.1:8069/web_editor/static/src/xml/ace.xml || exit 1
+```
 
 ## Running and tests
 
@@ -29,16 +31,18 @@ instance with the generated configuration, there are other commands available.
 - `odoo-test` (re)creates a new database and runs Odoo tests
 - `odoo-getaddons.py` lists addon paths or addons with `-m`
 
-	# run the container
-	docker-compose up
+```bash
+# run the container
+docker-compose up
 
-	# inside the container
-	odoo-bin shell  # get to the shell
-	odoo-update sale --install --load-languages=en_GB
-	odoo-test -t -a template_module -d test_db_1
+# inside the container
+odoo-bin shell  # get to the shell
+odoo-update sale --install --load-languages=en_GB
+odoo-test -t -a template_module -d test_db_1
 
-	# test using docker-compose
-	docker-compose -f docker-compose.yaml -f docker-compose.test.yaml run --rm odoo
+# test using docker-compose
+docker-compose -f docker-compose.yaml -f docker-compose.test.yaml run --rm odoo
+```
 
 Odoo binds user sessions to the URL in `web.base.url`.
 If you *run containers on different ports*, you may need to use
