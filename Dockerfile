@@ -1,4 +1,4 @@
-from ubuntu:22.04 as system
+from ubuntu:24.04 as system
 shell ["/bin/bash", "-xo", "pipefail", "-c"]
 # https://www.odoo.com/documentation/master/administration/install.html
 
@@ -44,17 +44,14 @@ from system as base
 arg ODOO_SOURCE=https://github.com/odoo
 # If using SSH clone:
 # arg ODOO_SOURCE=git@github.com:odoo
-arg ODOO_VERSION=16.0
+arg ODOO_VERSION=17.0
 arg ODOO_DATA_DIR=/var/lib/odoo
 env ODOO_VERSION=${ODOO_VERSION}
 env ODOO_BASEPATH=/opt/odoo
 run mkdir -p -m 0600 ~/.ssh && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 run --mount=type=ssh git clone --quiet --depth 1 "--branch=$ODOO_VERSION" $ODOO_SOURCE/odoo.git \
     ${ODOO_BASEPATH} && rm -rf ${ODOO_BASEPATH}/.git
-# cryptography >= 38 is incompatible with openssl==19 in odoo
-# - version 14.0 incompatibility with werkzeug 2.x (selected later)
 run pip install --prefix=/usr --no-cache-dir --upgrade \
-    'cryptography<38' \
     -r ${ODOO_BASEPATH}/requirements.txt
 
 # Create user and mounts
@@ -80,8 +77,6 @@ volume ["${ODOO_DATA_DIR}"]
 # - development tools
 run pip install --prefix=/usr --no-cache-dir \
     geoip2 pdfminer.six phonenumbers python-magic python-slugify \
-    'cryptography<38' \
-    $([ "$ODOO_VERSION" != 14.0 ] || echo 'Werkzeug==0.16.1') \
     click-odoo click-odoo-contrib \
     debugpy py-spy \
     black flake8 isort pylint-odoo \
