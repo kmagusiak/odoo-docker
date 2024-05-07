@@ -5,7 +5,6 @@ from ghcr.io/kmagusiak/odoo-docker:${ODOO_VERSION} as base
 from base as vscode
 run apt-get update \
 	&& apt-get install -y --no-install-recommends \
-	libxml2-utils \
 	bash-completion gettext git htop less openssh-client vim
 
 add requirements-dev.txt /tmp

@@ -1,5 +1,6 @@
 name: Docker build and push
 # with secret.SSH_KEY
+# required for enterprise checkout
 
 on:
   push:

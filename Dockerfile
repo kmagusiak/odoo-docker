@@ -53,6 +53,16 @@ run --mount=type=ssh git clone --quiet --depth 1 "--branch=$ODOO_VERSION" $ODOO_
     ${ODOO_BASEPATH} && rm -rf ${ODOO_BASEPATH}/.git
 run pip install --prefix=/usr --no-cache-dir --upgrade \
     -r ${ODOO_BASEPATH}/requirements.txt
+# Add additional python libraries
+# - optional Odoo libraries (for most commonly used modules)
+# - versions compatibility
+# - click tools
+# - development tools
+run pip install --prefix=/usr --no-cache-dir \
+    geoip2 pdfminer.six phonenumbers python-magic python-slugify \
+    click-odoo click-odoo-contrib \
+    debugpy py-spy \
+    black flake8 isort pylint-odoo
 
 # Create user and mounts
 # /var/lib/odoo for filestore and HOME
@@ -70,17 +80,6 @@ run mkdir -p /etc/odoo \
     && ln -s "${ODOO_BASEPATH}/odoo-bin" /usr/bin/odoo-bin
 volume ["${ODOO_DATA_DIR}"]
 
-# Add additional python libraries
-# - optional Odoo libraries (for most commonly used modules)
-# - versions compatibility
-# - click tools
-# - development tools
-run pip install --prefix=/usr --no-cache-dir \
-    geoip2 pdfminer.six phonenumbers python-magic python-slugify \
-    click-odoo click-odoo-contrib \
-    debugpy py-spy \
-    black flake8 isort pylint-odoo \
-    pytest-odoo websocket-client
 # Copy entrypoint script and set entry points
 copy resources/wait-for-psql.py resources/odoo-* /usr/local/bin/
 copy resources/entrypoint.sh /
@@ -105,9 +104,15 @@ user root
 run apt-get update \
 	&& apt-get install -y --no-install-recommends \
 	    bash-completion gettext git htop less openssh-client vim
+# chrome for testing
+run curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb --output /tmp/google-chrome.deb \
+	&& apt-get install -y --no-install-recommends /tmp/google-chrome.deb \
+	&& rm /tmp/google-chrome.deb
+# additional development tools
 run pip install --prefix=/usr --no-cache-dir \
-    prompt-toolkit==3.0.28 \
-    debugpy ipython
+    debugpy \
+    pytest-odoo websocket-client \
+    ipython prompt-toolkit==3.0.28 jupyterlab
 
 user odoo
 
