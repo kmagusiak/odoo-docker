@@ -52,10 +52,20 @@ run mkdir -p -m 0600 ~/.ssh && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hos
 run --mount=type=ssh git clone --quiet --depth 1 "--branch=$ODOO_VERSION" $ODOO_SOURCE/odoo.git \
     ${ODOO_BASEPATH} && rm -rf ${ODOO_BASEPATH}/.git
 # cryptography >= 38 is incompatible with openssl==19 in odoo
-# - version 14.0 incompatibility with werkzeug 2.x (selected later)
 run pip install --prefix=/usr --no-cache-dir --upgrade \
     'cryptography<38' \
     -r ${ODOO_BASEPATH}/requirements.txt
+# Add additional python libraries
+# - optional Odoo libraries (for most commonly used modules)
+# - versions compatibility
+# - click tools
+# - development tools
+run pip install --prefix=/usr --no-cache-dir \
+    geoip2 pdfminer.six phonenumbers python-magic python-slugify \
+    'cryptography<38' \
+    click-odoo click-odoo-contrib \
+    debugpy py-spy \
+    black flake8 isort pylint-odoo
 
 # Create user and mounts
 # /var/lib/odoo for filestore and HOME
@@ -73,19 +83,6 @@ run mkdir -p /etc/odoo \
     && ln -s "${ODOO_BASEPATH}/odoo-bin" /usr/bin/odoo-bin
 volume ["${ODOO_DATA_DIR}"]
 
-# Add additional python libraries
-# - optional Odoo libraries (for most commonly used modules)
-# - versions compatibility
-# - click tools
-# - development tools
-run pip install --prefix=/usr --no-cache-dir \
-    geoip2 pdfminer.six phonenumbers python-magic python-slugify \
-    'cryptography<38' \
-    $([ "$ODOO_VERSION" != 14.0 ] || echo 'Werkzeug==0.16.1') \
-    click-odoo click-odoo-contrib \
-    debugpy py-spy \
-    black flake8 isort pylint-odoo \
-    pytest-odoo websocket-client
 # Copy entrypoint script and set entry points
 copy resources/wait-for-psql.py resources/odoo-* /usr/local/bin/
 copy resources/entrypoint.sh /
@@ -110,9 +107,15 @@ user root
 run apt-get update \
 	&& apt-get install -y --no-install-recommends \
 	    bash-completion gettext git htop less openssh-client vim
+# chrome for testing
+run curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb --output /tmp/google-chrome.deb \
+	&& apt-get install -y --no-install-recommends /tmp/google-chrome.deb \
+	&& rm /tmp/google-chrome.deb
+# additional development tools
 run pip install --prefix=/usr --no-cache-dir \
-    prompt-toolkit==3.0.28 \
-    debugpy ipython
+    debugpy \
+    pytest-odoo websocket-client \
+    ipython prompt-toolkit==3.0.28 jupyterlab
 
 user odoo
 
