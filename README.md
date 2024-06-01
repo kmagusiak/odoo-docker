@@ -16,7 +16,7 @@ A github action builds a docker image that can be used for development
 and testing.
 https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
 
-You can add a *health check* in you need it for production.
+You can add a *health check* if you need it for production.
 
 ```
 healthcheck cmd curl --fail http://127.0.0.1:8069/web_editor/static/src/xml/ace.xml || exit 1
@@ -46,7 +46,7 @@ docker-compose -f docker-compose.yaml -f docker-compose.test.yaml run --rm odoo
 
 Odoo binds user sessions to the URL in `web.base.url`.
 If you *run containers on different ports*, you may need to use
-`127.0.0.1:port` instead of `localhost`.
+`127.0.0.1:port` or host aliases instead of `localhost`.
 
 ## Connecting to the database
 

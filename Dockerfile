@@ -1,10 +1,17 @@
-from ubuntu:22.04 as system
-shell ["/bin/bash", "-xo", "pipefail", "-c"]
 # https://www.odoo.com/documentation/master/administration/install.html
+# Multi-stage build:
+# 1. Define system targets (different OS versions)
+# 2. Install odoo-community with dependencies
+# 3. Final targets: odoo, odoodev, enterprise, etc.
 
-# Generate locale C.UTF-8 for postgres and general locale data
+###########################################################
+# SYSTEM
+# always set UTF-8 locale qnd redirect python output to stdout
+
+arg SYSTEM_BASE=ubuntu:22.04
+from ${SYSTEM_BASE} as system
+shell ["/bin/bash", "-xo", "pipefail", "-c"]
 env LANG C.UTF-8
-# Send python output directly to the stdout
 env PYTHONUNBUFFERED=1
 
 # Install dependencies (non-interactive flag for tzdata)
@@ -32,40 +39,38 @@ run curl -o wkhtmltox.zip -sSL https://github.com/wkhtmltopdf/packaging/files/86
     && unzip wkhtmltox.zip && rm wkhtmltox.zip && mv wkhtmlto*.deb wkhtmltox.deb \
     && apt-get install -y --no-install-recommends ./wkhtmltox.deb \
     && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
-# alternative installation version (commented because libssl1.1 is missing - libssl3 is installed)
+# alternative installation version (for debian; libssl1.1 is missing - libssl3 is installed)
 #run curl -o wkhtmltox.deb -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.buster_amd64.deb \
 #    && echo 'ea8277df4297afc507c61122f3c349af142f31e5 wkhtmltox.deb' | sha1sum -c - \
 #    && apt-get install -y --no-install-recommends ./wkhtmltox.deb \
 #    && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
 
+###########################################################
+# INSTALL ODOO
+
 from system as base
 # Install/Clone Odoo
-# If using HTTPS clone:
 arg ODOO_SOURCE=https://github.com/odoo
-# If using SSH clone:
 # arg ODOO_SOURCE=git@github.com:odoo
-arg ODOO_VERSION=16.0
+arg ODOO_VERSION=master
 arg ODOO_DATA_DIR=/var/lib/odoo
 env ODOO_VERSION=${ODOO_VERSION}
 env ODOO_BASEPATH=/opt/odoo
 run mkdir -p -m 0600 ~/.ssh && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 run --mount=type=ssh git clone --quiet --depth 1 "--branch=$ODOO_VERSION" $ODOO_SOURCE/odoo.git \
     ${ODOO_BASEPATH} && rm -rf ${ODOO_BASEPATH}/.git
-# cryptography >= 38 is incompatible with openssl==19 in odoo
-run pip install --prefix=/usr --no-cache-dir --upgrade \
-    'cryptography<38' \
-    -r ${ODOO_BASEPATH}/requirements.txt
 # Add additional python libraries
 # - optional Odoo libraries (for most commonly used modules)
 # - versions compatibility
+#     cryptography >= 38 is incompatible with openssl==19 in odoo
 # - click tools
-# - development tools
-run pip install --prefix=/usr --no-cache-dir \
-    geoip2 pdfminer.six phonenumbers python-magic python-slugify \
+# - debug tools
+run pip install --prefix=/usr --no-cache-dir --upgrade \
     'cryptography<38' \
+    -r ${ODOO_BASEPATH}/requirements.txt \
+    geoip2 pdfminer.six phonenumbers python-magic python-slugify \
     click-odoo click-odoo-contrib \
-    debugpy py-spy \
-    black flake8 isort pylint-odoo
+    debugpy py-spy
 
 # Create user and mounts
 # /var/lib/odoo for filestore and HOME
@@ -93,6 +98,9 @@ env PGPORT=5432
 env PGUSER=odoo
 env PGPASSWORD=odoo
 
+###########################################################
+# FINAL TARGETS
+
 ###############################
 # ODOO
 from base as odoo
@@ -114,8 +122,8 @@ run curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.d
 # additional development tools
 run pip install --prefix=/usr --no-cache-dir \
     debugpy \
-    pytest-odoo websocket-client \
-    ipython prompt-toolkit==3.0.28 jupyterlab
+    ipython prompt-toolkit==3.0.28 jupyterlab \
+    black flake8 isort pylint-odoo pytest-odoo websocket-client
 
 user odoo
 
