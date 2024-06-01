@@ -34,9 +34,9 @@ jobs:
       SSH_AUTH_SOCK: /tmp/ssh_agent.sock
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Login to GitHub Packages
-      uses: docker/login-action@v2
+      uses: docker/login-action@v3
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
@@ -50,7 +50,7 @@ jobs:
         (ssh -T git@github.com 2>&1|| true) | grep successfully
 
     - name: Build Odoo Docker image
-      uses: docker/build-push-action@v3
+      uses: docker/build-push-action@v5
       with:
         context: .
         file: Dockerfile.enterprise
