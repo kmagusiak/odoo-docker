@@ -46,7 +46,7 @@ docker-compose -f docker-compose.yaml -f docker-compose.test.yaml run --rm odoo
 
 Odoo binds user sessions to the URL in `web.base.url`.
 If you *run containers on different ports*, you may need to use
-`127.0.0.1:port` instead of `localhost`.
+`127.0.0.1:port` or host aliases instead of `localhost`.
 
 ## Connecting to the database
 
