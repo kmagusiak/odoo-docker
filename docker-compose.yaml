@@ -35,8 +35,10 @@ services:
     restart: unless-stopped
     volumes:
       - postgres_odoo:/var/lib/postgresql/data
+      # optional pgtune
+      #- ./resources/db_tune.sql:/docker-entrypoint-initdb.d/db_tune.sql:ro
     environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_PASSWORD=${PGPASSWORD}
-      - POSTGRES_USER=${PGUSER}
-      - PGDATA=/var/lib/postgresql/data
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: ${PGPASSWORD}
+      POSTGRES_USER: ${PGUSER}
+      PGDATA: /var/lib/postgresql/data
