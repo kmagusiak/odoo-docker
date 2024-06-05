@@ -11,8 +11,8 @@
 		"editor.tabSize": 4
 	},
 	"black-formatter.args": [
-        "--skip-string-normalization",
-        "--line-length",
-        "100"
-    ]
+		"--skip-string-normalization",
+		"--line-length",
+		"100"
+	]
 }

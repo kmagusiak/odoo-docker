@@ -4,16 +4,11 @@
 # 2. Install odoo-community with dependencies
 # 3. Final targets: odoo, odoodev, enterprise, etc.
 
-arg SYSTEM_BASE=ubuntu:24.04
-arg ODOO_SOURCE=https://github.com/odoo
-# arg ODOO_SOURCE=git@github.com:odoo
-arg ODOO_VERSION=master
-arg ODOO_DATA_DIR=/var/lib/odoo
-
 ###########################################################
 # SYSTEM
 # always set UTF-8 locale qnd redirect python output to stdout
 
+arg SYSTEM_BASE=ubuntu:24.04
 from ${SYSTEM_BASE} as system
 shell ["/bin/bash", "-xo", "pipefail", "-c"]
 env LANG C.UTF-8
@@ -55,19 +50,24 @@ run curl -o wkhtmltox.zip -sSL https://github.com/wkhtmltopdf/packaging/files/86
 
 from system as base
 # Install/Clone Odoo
+arg ODOO_SOURCE=https://github.com/odoo
+# arg ODOO_SOURCE=git@github.com:odoo
+arg ODOO_VERSION=master
+arg ODOO_DATA_DIR=/var/lib/odoo
 env ODOO_VERSION=${ODOO_VERSION}
 env ODOO_BASEPATH=/opt/odoo
 run mkdir -p -m 0600 ~/.ssh && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 run --mount=type=ssh git clone --quiet --depth 1 "--branch=$ODOO_VERSION" $ODOO_SOURCE/odoo.git \
     ${ODOO_BASEPATH} && rm -rf ${ODOO_BASEPATH}/.git
-run pip install --prefix=/usr --no-cache-dir --upgrade \
-    -r ${ODOO_BASEPATH}/requirements.txt
 # Add additional python libraries
 # - optional Odoo libraries (for most commonly used modules)
 # - versions compatibility
+#     cryptography >= 38 is incompatible with openssl==19 in odoo
 # - click tools
 # - debug tools
-run pip install --prefix=/usr --no-cache-dir \
+run pip install --prefix=/usr --no-cache-dir --upgrade \
+    'cryptography<38' \
+    -r ${ODOO_BASEPATH}/requirements.txt \
     geoip2 pdfminer.six phonenumbers python-magic python-slugify \
     click-odoo click-odoo-contrib \
     debugpy py-spy
