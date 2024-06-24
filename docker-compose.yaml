@@ -10,6 +10,7 @@ services:
       context: .
       args:
         ODOO_VERSION: ${ODOO_VERSION}
+        SYSTEM_BASE: ${SYSTEM_BASE}
       dockerfile: Dockerfile
       target: ${DOCKER_TARGET}
     env_file: .env

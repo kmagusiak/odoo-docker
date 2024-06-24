@@ -8,7 +8,7 @@
 # SYSTEM
 # always set UTF-8 locale qnd redirect python output to stdout
 
-arg SYSTEM_BASE=ubuntu:22.04
+arg SYSTEM_BASE=ubuntu:24.04
 from ${SYSTEM_BASE} as system
 shell ["/bin/bash", "-xo", "pipefail", "-c"]
 env LANG C.UTF-8
@@ -62,11 +62,9 @@ run --mount=type=ssh git clone --quiet --depth 1 "--branch=$ODOO_VERSION" $ODOO_
 # Add additional python libraries
 # - optional Odoo libraries (for most commonly used modules)
 # - versions compatibility
-#     cryptography >= 38 is incompatible with openssl==19 in odoo
 # - click tools
 # - debug tools
 run pip install --prefix=/usr --no-cache-dir --upgrade \
-    'cryptography<38' \
     -r ${ODOO_BASEPATH}/requirements.txt \
     geoip2 pdfminer.six phonenumbers python-magic python-slugify \
     click-odoo click-odoo-contrib \
@@ -122,7 +120,7 @@ run curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.d
 # additional development tools
 run pip install --prefix=/usr --no-cache-dir \
     debugpy \
-    ipython prompt-toolkit==3.0.28 jupyterlab \
+    ipython jupyterlab \
     black flake8 isort pylint-odoo pytest-odoo websocket-client
 
 user odoo

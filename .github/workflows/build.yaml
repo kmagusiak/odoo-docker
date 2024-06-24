@@ -30,6 +30,7 @@ jobs:
         odoo-version: ["16.0", "17.0", "master"]
     env:
       ODOO_VERSION: "${{ matrix.odoo-version }}"
+      SYSTEM_BASE: "ubuntu:24.04"
 
     steps:
     - uses: actions/checkout@v4
@@ -48,6 +49,7 @@ jobs:
         target: odoo
         build-args: |
           ODOO_VERSION=${{ env.ODOO_VERSION }}
+          SYSTEM_BASE=${{ env.SYSTEM_BASE }}
         tags: ghcr.io/${{ github.repository }}:${{ env.ODOO_VERSION }}
         load: true
         push: false
@@ -67,5 +69,6 @@ jobs:
         target: odoo
         build-args: |
           ODOO_VERSION=${{ env.ODOO_VERSION }}
+          SYSTEM_BASE=${{ env.SYSTEM_BASE }}
         tags: ghcr.io/${{ github.repository }}:${{ env.ODOO_VERSION }}
         push: ${{ github.event_name != 'pull_request' }}
