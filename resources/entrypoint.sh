@@ -65,7 +65,7 @@ then
     do
         [ -d "$ADDON_PATH" ] || continue
         echo "ENTRY - Auto install requirements.txt from $ADDON_PATH"
-        find "$ADDON_PATH" -name 'requirements.txt' -exec pip3 install --user -r {} \;
+        find "$ADDON_PATH" -name 'requirements.txt' -exec pip3 install --break-system-packages --user -r {} \;
     done
 fi
 

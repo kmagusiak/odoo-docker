@@ -8,8 +8,7 @@
 # SYSTEM
 # always set UTF-8 locale qnd redirect python output to stdout
 
-arg SYSTEM_BASE=ubuntu:24.04
-from ${SYSTEM_BASE} as system
+from ubuntu:24.04 as system
 shell ["/bin/bash", "-xo", "pipefail", "-c"]
 env LANG C.UTF-8
 env PYTHONUNBUFFERED=1
@@ -85,6 +84,9 @@ run mkdir -p /etc/odoo \
     && echo "${ODOO_BASEPATH}" > "$PYTHON_DIST_PACKAGES/odoo.pth" \
     && ln -s "${ODOO_BASEPATH}/odoo-bin" /usr/bin/odoo-bin
 volume ["${ODOO_DATA_DIR}"]
+
+# Remove ubuntu user (added since 24.04)
+run userdel ubuntu
 
 # Copy entrypoint script and set entry points
 copy resources/wait-for-psql.py resources/odoo-* /usr/local/bin/
