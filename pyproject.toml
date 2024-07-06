@@ -1,8 +1,14 @@
+[project]
+requires-python = ">=3.10"
+
 [build-system]
 requires = [
 	"setuptools>=61",
 ]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+local_scheme = "no-local-version"
 
 [tool.black]
 line-length = 100
@@ -15,5 +21,11 @@ ignore_missing_imports = true
 profile = "black"
 line_length = 100
 
-[tool.setuptools_scm]
-local_scheme = "no-local-version"
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.format]
+quote-style="preserve"
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
