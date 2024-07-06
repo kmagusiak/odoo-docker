@@ -40,7 +40,7 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Build Odoo Community Docker image
+    - name: Build Odoo image
       uses: docker/build-push-action@v5
       with:
         context: .
@@ -52,14 +52,14 @@ jobs:
         load: true
         push: false
 
-    - name: Run image test
+    - name: Run Odoo image
       run: |
         cat > Dockerfile.test <<EOF
         FROM ghcr.io/${{ github.repository }}:${{ env.ODOO_VERSION }} as odoo
         EOF
         DOCKERFILE=Dockerfile.test docker-compose -f docker-compose.yaml -f docker-compose.test.yaml run --rm odoo odoo-update base --install
 
-    - name: Publish Odoo Community Docker image
+    - name: Publish Odoo image
       uses: docker/build-push-action@v5
       with:
         context: .
@@ -68,4 +68,15 @@ jobs:
         build-args: |
           ODOO_VERSION=${{ env.ODOO_VERSION }}
         tags: ghcr.io/${{ github.repository }}:${{ env.ODOO_VERSION }}
+        push: ${{ github.event_name != 'pull_request' }}
+
+    - name: Publish Odoo dev image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: Dockerfile
+        target: odoodev
+        build-args: |
+          ODOO_VERSION=${{ env.ODOO_VERSION }}
+        tags: ghcr.io/${{ github.repository }}:${{ env.ODOO_VERSION }}-dev
         push: ${{ github.event_name != 'pull_request' }}
