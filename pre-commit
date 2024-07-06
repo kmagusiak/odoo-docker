@@ -6,9 +6,8 @@ cd "$(dirname "$0")"
 [ -d .git ]
 
 pre_commit() {
-	flake8
-	black --check .
-	isort --check-only .
+	ruff check
+	ruff format --check
 }
 
 # Commands
