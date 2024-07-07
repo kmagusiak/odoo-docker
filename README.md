@@ -1,26 +1,19 @@
 # Odoo docker image
 
 Build a docker image with Odoo for local development and test purposes.
-
 See [odoo-vscode](https://github.com/kmagusiak/odoo-vscode)
-for a working dev environment.
+for a working dev environment *(not only for vscode)*.
+
+[![Package](https://img.shields.io/badge/package-ghcr.io-blue)](https://github.com/kmagusiak/odoo-docker/pkgs/container/odoo-docker)
+
 
 # Using the image
 
 ## Building your own image
 
 You can fork this repository and adapt the files as you wish.
-In the [extending](./extending/README.md) directory, you will find examples.
-
-A github action builds a docker image that can be used for development
-and testing.
-https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
-
-You can add a *health check* if you need it for production.
-
-```
-healthcheck cmd curl --fail http://127.0.0.1:8069/web_editor/static/src/xml/ace.xml || exit 1
-```
+In the [extending](./extending/README.md) directory, you will find examples
+to build an image with enterprise or other private repositories included.
 
 ## Running and tests
 
@@ -30,6 +23,7 @@ instance with the generated configuration, there are other commands available.
 - `odoo-update` installs or updates a list of modules
 - `odoo-test` (re)creates a new database and runs Odoo tests
 - `odoo-getaddons.py` lists addon paths or addons with `-m`
+- [click-odoo-contrib] tools
 
 ```bash
 # run the container
@@ -61,20 +55,20 @@ You can use directly the postgres tools to restore the database.
 ## Paths
 
 - `ODOO_BASEPATH` (`/opt/odoo`) where you find Odoo source code
-- `ODOO_BASE_ADDONS` where you find addons bundled in the image
-  like *enterprise*, *themes*, etc.
-- `ODOO_EXTRA_ADDONS` where you can mount your addons
+- `ODOO_BASE_ADDONS` (`/opt/odoo-addons`) where you find addons bundled
+  in the image like *enterprise*, *themes*, etc.
+- `ODOO_EXTRA_ADDONS` where you can mount additional addons
 
 ## The Dockerfile
 
-Starting from an Ubuntu image, we install the required tools and clone
-the official Odoo repository.
+Starting from an Ubuntu image, we install the required tools and install like
+on-remise source install using pip ([odoo install guide]).
 We install various tools such as `click-odoo-contrib` and `debugpy`;
 other development tools are pre-installed for testing.
 
 You can set up environment variables in `.env` file.
-These are loaded into the Odoo container and a configuration file is generated
-every time the container starts at `/etc/odoo/odoo.conf`.
+When the container starts, it generates the configuration `/etc/odoo/odoo.conf`
+file based on the environment variables.
 
 Odoo addons path is discovered from the paths where addons can be built.
 Some other variables control the startup:
@@ -92,9 +86,7 @@ Some other variables control the startup:
 Based on:
 
 * [dockerdoo]
-* [Odoo] ([odoo-docker])
-* [OCA] ([maintainer-quality-tools](https://github.com/OCA/maintainer-quality-tools))
-* [click-odoo-contrib]
+* [Odoo] ([odoo-docker] - oriented for deployments)
 
 
 [click-odoo-contrib]: https://github.com/acsone/click-odoo-contrib
@@ -102,3 +94,4 @@ Based on:
 [OCA]: https://github.com/OCA
 [Odoo]: https://github.com/odoo
 [odoo-docker]: https://github.com/odoo/docker
+[odoo install guide]: https://www.odoo.com/documentation/master/administration/on_premise/source.html
