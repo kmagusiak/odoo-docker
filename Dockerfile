@@ -1,4 +1,3 @@
-# https://www.odoo.com/documentation/master/administration/on_premise/source.html
 # Multi-stage build:
 # 1. Define system targets (different OS versions)
 # 2. Install odoo-community with dependencies
