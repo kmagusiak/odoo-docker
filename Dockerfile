@@ -110,6 +110,7 @@ run curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.d
 	&& apt-get install -y --no-install-recommends /tmp/google-chrome.deb \
 	&& rm /tmp/google-chrome.deb
 
+env PIP_BREAK_SYSTEM_PACKAGES=1
 user odoo
 
 ###############################
