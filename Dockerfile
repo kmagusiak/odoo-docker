@@ -108,6 +108,7 @@ run apt-get update \
 # chrome for testing
 run curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb --output /tmp/google-chrome.deb \
 	&& apt-get install -y --no-install-recommends /tmp/google-chrome.deb \
+    && pip install --prefix=/usr --no-cache-dir websocket-client \
 	&& rm /tmp/google-chrome.deb
 
 env PIP_BREAK_SYSTEM_PACKAGES=1
