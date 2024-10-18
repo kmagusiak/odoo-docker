@@ -49,6 +49,11 @@ env ODOO_BASEPATH=/opt/odoo
 run mkdir -p -m 0600 ~/.ssh && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 run --mount=type=ssh git clone --quiet --depth 1 "--branch=$ODOO_VERSION" $ODOO_SOURCE/odoo.git \
     ${ODOO_BASEPATH} && rm -rf ${ODOO_BASEPATH}/.git
+
+# Debian packages for Odoo
+run $ODOO_BASEPATH/setup/debinstall.sh \
+    && rm -rf /var/lib/apt/lists/*
+
 # Add additional python libraries
 # - optional Odoo libraries (for most commonly used modules)
 # - versions compatibility
