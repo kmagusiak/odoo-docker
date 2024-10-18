@@ -49,16 +49,30 @@ env ODOO_BASEPATH=/opt/odoo
 run mkdir -p -m 0600 ~/.ssh && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 run --mount=type=ssh git clone --quiet --depth 1 "--branch=$ODOO_VERSION" $ODOO_SOURCE/odoo.git \
     ${ODOO_BASEPATH} && rm -rf ${ODOO_BASEPATH}/.git
-# Add additional python libraries
+
+# Install dependencies
+# When set: install dependencies from requirements.txt file
+# When not set: install Debian packages
+# Add additional python libraries:
 # - optional Odoo libraries (for most commonly used modules)
 # - versions compatibility
 # - click tools
 # - debug tools
-run pip install --prefix=/usr --no-cache-dir --upgrade \
+arg ODOO_REQUIREMENTS=0
+# Debian packages for Odoo
+run [ $ODOO_REQUIREMENTS -eq 0 ] && ( \
+    $ODOO_BASEPATH/setup/debinstall.sh \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    python3-geoip2 python3-magic python3-pdfminer python3-phonenumbers python3-slugify \
+    && rm -rf /var/lib/apt/lists/* \
+    && pip install --prefix=/usr --no-cache-dir \
+    click-odoo click-odoo-contrib \ debugpy py-spy \
+    ) || ( [ $ODOO_REQUIREMENTS -ne 0 ] \
+    && pip install --prefix=/usr --no-cache-dir --upgrade \
     -r ${ODOO_BASEPATH}/requirements.txt \
     geoip2 pdfminer.six phonenumbers python-magic python-slugify \
-    click-odoo click-odoo-contrib \
-    debugpy py-spy
+    click-odoo click-odoo-contrib debugpy py-spy \
+    )
 
 # Create user and mounts
 # /var/lib/odoo for filestore and HOME
