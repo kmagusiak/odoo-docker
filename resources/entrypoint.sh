@@ -51,7 +51,6 @@ test_enable = ${TEST_ENABLE:=False}
 unaccent = ${UNACCENT:-False}
 without_demo = ${WITHOUT_DEMO:-True}
 workers = ${WORKERS:-0}
-odoo_stage = ${ODOO_STAGE:-docker}
 EOF
 fi
 
