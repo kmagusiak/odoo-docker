@@ -7,6 +7,12 @@ on:
   pull_request:
     branches:
       - master
+  workflow_dispatch:
+    inputs:
+      publish:
+        type: boolean
+        default: false
+        description: "Publish image"
   schedule:
     # info: official builds are Friday evening
     # run once a month
@@ -22,7 +28,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     strategy:
@@ -30,6 +35,7 @@ jobs:
         odoo-version: ["18.0", "master"]
     env:
       ODOO_VERSION: "${{ matrix.odoo-version }}"
+      PUBLISH_IMAGES: "${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_dispatch' || github.event.inputs.publish)  }}"
 
     steps:
     - uses: actions/checkout@v4
@@ -68,7 +74,7 @@ jobs:
         build-args: |
           ODOO_VERSION=${{ env.ODOO_VERSION }}
         tags: ghcr.io/${{ github.repository }}:${{ env.ODOO_VERSION }}
-        push: ${{ github.event_name != 'pull_request' }}
+        push: ${{ env.PUBLISH_IMAGES }}
 
     - name: Publish Odoo dev image
       uses: docker/build-push-action@v5
@@ -79,4 +85,4 @@ jobs:
         build-args: |
           ODOO_VERSION=${{ env.ODOO_VERSION }}
         tags: ghcr.io/${{ github.repository }}:${{ env.ODOO_VERSION }}-dev
-        push: ${{ github.event_name != 'pull_request' }}
+        push: ${{ env.PUBLISH_IMAGES }}
