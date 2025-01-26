@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
 
-# set server timezone in UTC before time module imported
-__import__('os').environ['TZ'] = 'UTC'
-# ignore E402, import not at top-level
-import datetime  # noqa: E402
-import os  # noqa: E402
-import sys  # noqa: E402
+import odoo.cli  # import first to patch the environment
 
-import odoo  # noqa: E402
+import datetime
+import os
+import sys
 
 __doc__ = """Runs odoo tests for all modules found in a given path.
 The database is re-created first with some pre-installed modules.
