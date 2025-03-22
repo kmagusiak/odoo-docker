@@ -9,10 +9,5 @@
 	"[python]": {
 		"editor.insertSpaces": true,
 		"editor.tabSize": 4
-	},
-	"black-formatter.args": [
-		"--skip-string-normalization",
-		"--line-length",
-		"100"
-	]
+	}
 }
