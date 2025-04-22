@@ -48,7 +48,9 @@ env ODOO_VERSION=${ODOO_VERSION}
 env ODOO_BASEPATH=/opt/odoo
 run mkdir -p -m 0600 ~/.ssh && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 run --mount=type=ssh git clone --quiet --depth 1 "--branch=$ODOO_VERSION" $ODOO_SOURCE/odoo.git \
-    ${ODOO_BASEPATH} && rm -rf ${ODOO_BASEPATH}/.git
+    ${ODOO_BASEPATH} \
+    && rm -rf ${ODOO_BASEPATH}/.git \
+    && python3 -m compileall ${ODOO_BASEPATH}
 # Add additional python libraries
 # - optional Odoo libraries (for most commonly used modules)
 # - versions compatibility
@@ -121,10 +123,14 @@ user root
 
 # Clone Odoo themes
 run --mount=type=ssh git clone --quiet --depth 1 "--branch=$ODOO_VERSION" $ODOO_SOURCE/design-themes.git \
-    ${ODOO_BASE_ADDONS}/odoo-themes && rm -rf ${ODOO_BASE_ADDONS}/odoo-themes/.git
+    ${ODOO_BASE_ADDONS}/odoo-themes \
+    && rm -rf ${ODOO_BASE_ADDONS}/odoo-themes/.git \
+    && pyton3 -m compileall ${ODOO_BASE_ADDONS}/odoo-themes
 
 # Clone Odoo enterprise sources
 run --mount=type=ssh git clone --quiet --depth 1 "--branch=$ODOO_VERSION" $ODOO_SOURCE/enterprise.git \
-    ${ODOO_BASE_ADDONS}/enterprise && rm -rf ${ODOO_BASE_ADDONS}/enterprise/.git
+    ${ODOO_BASE_ADDONS}/enterprise \
+    && rm -rf ${ODOO_BASE_ADDONS}/enterprise/.git \
+    && pyton3 -m compileall ${ODOO_BASE_ADDONS}/enterprise
 
 user odoo
