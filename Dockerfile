@@ -65,7 +65,6 @@ run pip install --prefix=/usr --no-cache-dir --upgrade \
 # Create user and mounts
 # /var/lib/odoo for filestore and HOME
 # /mnt/extra-addons for users addons
-env ODOO_RC /etc/odoo/odoo.conf
 env ODOO_BASE_ADDONS=/opt/odoo-addons
 env ODOO_EXTRA_ADDONS=/mnt/extra-addons
 env PYTHON_DIST_PACKAGES=/usr/lib/python3/dist-packages
@@ -74,7 +73,8 @@ run mkdir -p /etc/odoo \
 	&& useradd --system --no-create-home --home-dir "${ODOO_DATA_DIR}" --shell /bin/bash odoo \
     && userdel ubuntu \
     && chown -R odoo:odoo /etc/odoo "${ODOO_BASE_ADDONS}" "${ODOO_EXTRA_ADDONS}" "${ODOO_DATA_DIR}" \
-    && chmod 775 /etc/odoo "${ODOO_DATA_DIR}" \
+    && chmod 551 /etc/odoo \
+    && chmod 775 "${ODOO_DATA_DIR}" \
     && echo "${ODOO_BASEPATH}" > "$PYTHON_DIST_PACKAGES/odoo.pth" \
     && ln -s "${ODOO_BASEPATH}/odoo-bin" /usr/bin/odoo-bin
 volume ["${ODOO_DATA_DIR}"]
