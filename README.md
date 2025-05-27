@@ -72,8 +72,8 @@ file based on the environment variables.
 
 Odoo addons path is discovered from the paths where addons can be built.
 Some other variables control the startup:
-- `DB_NAME`: the default database is `odoo`.
-- `WITHOUT_DEMO`: don't install demo data (default: false)
+- `PGDATABASE`: the default database is `odoo`.
+- `ODOO_WITH_DEMO`: install demo data (default: true)
 - `PIP_AUTO_INSTALL`: discover *requirements.txt* files in addons folders and
   install them when starting the container (default: true)
 - `UPGRADE_ENABLE`: when starting, run `click-odoo-update` (default: false)

@@ -17,40 +17,6 @@ then
 [options]
 addons_path = ${EXTRA_ADDONS_PATHS}
 admin_passwd = ${ADMIN_PASSWORD:-admin}
-data_dir = ${ODOO_DATA_DIR:-/var/lib/odoo}
-db_host = ${PGHOST}
-db_maxconn = ${DB_MAXCONN:-64}
-db_password = ${PGPASSWORD}
-db_port = ${PGPORT}
-db_sslmode = ${DB_SSLMODE:-prefer}
-db_template = ${DB_TEMPLATE:-template0}
-db_user = ${PGUSER}
-dbfilter = ${DB_FILTER:-}
-db_name = ${DB_NAME:-}
-limit_request = ${LIMIT_REQUEST:-8196}
-limit_memory_hard = ${LIMIT_MEMORY_HARD:-2684354560}
-limit_memory_soft = ${LIMIT_MEMORY_SOFT:-2147483648}
-limit_time_cpu = ${LIMIT_TIME_CPU:-60}
-limit_time_real = ${LIMIT_TIME_REAL:-120}
-limit_time_real_cron = ${LIMIT_TIME_REAL_CRON:-0}
-list_db = ${LIST_DB:-True}
-log_db = ${LOG_DB:-}
-log_db_level = ${LOG_DB_LEVEL:-warning}
-logfile = ${LOG_FILE:-None}
-log_handler = ${LOG_HANDLER:-:INFO}
-log_level = ${LOG_LEVEL:-info}
-max_cron_threads = ${MAX_CRON_THREADS:-2}
-proxy_mode = ${PROXY_MODE:-False}
-server_wide_modules = ${SERVER_WIDE_MODULES:-base,web}
-smtp_password = ${SMTP_PASSWORD:-}
-smtp_port = ${SMTP_PORT:-25}
-smtp_server = ${SMTP_SERVER:-localhost}
-smtp_ssl = ${SMTP_SSL:-False}
-smtp_user = ${SMTP_USER:-}
-test_enable = ${TEST_ENABLE:=False}
-unaccent = ${UNACCENT:-False}
-without_demo = ${WITHOUT_DEMO:-True}
-workers = ${WORKERS:-0}
 EOF
 fi
 
@@ -104,7 +70,7 @@ case "${1:-}" in
         fi
 
         echo "ENTRY - Wait for postgres"
-        wait-for-psql.py
+        PGDATABASE=postgres wait-for-psql.py
 
         if [ "${UPGRADE_ENABLE:-0}" == "1" ]
         then
@@ -119,10 +85,10 @@ case "${1:-}" in
 
         if [ "${INIT_DATABASE:-0}" == "1" ]
         then
-            : ${DB_NAME:=odoo}
-            if [ -n "${INSTALL_MODULES:-}" ] && echo "ENTRY - Check DB exists" && ! PGDATABASE=${DB_NAME} PGTIMEOUT=2 wait-for-psql.py
+            export PGDATABASE=${PGDATABASE:=odoo}
+            if [ -n "${INSTALL_MODULES:-}" ] && echo "ENTRY - Check DB exists" && ! PGTIMEOUT=2 wait-for-psql.py
             then
-                echo "ENTRY - Initialize database $DB_NAME: ${INSTALL_MODULES}"
+                echo "ENTRY - Initialize database $PGDATABASE: ${INSTALL_MODULES}"
                 odoo-update "$INSTALL_MODULES" "--install" "--load-language=${INSTALL_LANGUAGES:-}"
             fi
         fi
