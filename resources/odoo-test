@@ -48,13 +48,13 @@ def create_database(dbname, modules=[], template=None):
 def parse_args(args):
     import argparse
 
-    dbname = os.environ.get('TEST_DB_NAME')
+    dbname = os.environ.get('PGDATABASE_TEST')
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         '-d',
         '--database',
         metavar='database',
-        help='The database (required; env TEST_DB_NAME)',
+        help='The database (required; env PGDATABASE_TEST)',
         default=dbname,
         required=not dbname,
     )

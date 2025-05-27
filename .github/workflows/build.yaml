@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        odoo-version: ["18.0", "master"]
+        odoo-version: ["master"]
     env:
       ODOO_VERSION: "${{ matrix.odoo-version }}"
       PUBLISH_IMAGES: "${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_dispatch' || github.event.inputs.publish)  }}"

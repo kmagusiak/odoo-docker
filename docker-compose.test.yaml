@@ -6,7 +6,7 @@ services:
     build:
       dockerfile: ${DOCKERFILE:-Dockerfile}
     environment:
-      - WITHOUT_DEMO=False
+      - ODOO_WITH_DEMO=True
       - PIP_AUTO_INSTALL=1
       - DEBUGPY_ENABLE=0
     command: [
