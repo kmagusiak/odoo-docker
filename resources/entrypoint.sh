@@ -8,14 +8,22 @@ export PGHOST PGPORT PGUSER PGPASSWORD
 ODOO_BIN="$ODOO_BASEPATH/odoo-bin"
 : ${ODOO_BASE_ADDONS:=/opt/odoo-addons}
 : ${ODOO_EXTRA_ADDONS:=/mnt/extra-addons}
-ODOO_ADDONS_PATH=$(odoo-getaddons.py ${ODOO_EXTRA_ADDONS} ${ODOO_BASE_ADDONS} ${ODOO_BASEPATH})
-export ODOO_ADDONS_PATH
+EXTRA_ADDONS_PATHS=$(odoo-getaddons.py ${ODOO_EXTRA_ADDONS} ${ODOO_BASE_ADDONS} ${ODOO_BASEPATH})
 
-if [ -n "$ODOO_ADDONS_PATH" ]
+if [ ! -f "${ODOO_RC}" ]
 then
-    echo "ENTRY - Addons paths: $ODOO_ADDONS_PATH"
+    echo "ENTRY - Generate $ODOO_RC"
+    cat > $ODOO_RC <<EOF
+[options]
+addons_path = ${EXTRA_ADDONS_PATHS}
+EOF
 fi
-if [ -n "$ODOO_ADDONS_PATH" ] && [ "${PIP_AUTO_INSTALL:-0}" -eq "1" ]
+
+if [ -n "$EXTRA_ADDONS_PATHS" ]
+then
+    echo "ENTRY - Addons paths: $EXTRA_ADDONS_PATHS"
+fi
+if [ -n "$EXTRA_ADDONS_PATHS" ] && [ "${PIP_AUTO_INSTALL:-0}" -eq "1" ]
 then
     for ADDON_PATH in "$ODOO_BASE_ADDONS" "$ODOO_EXTRA_ADDONS"
     do
@@ -69,7 +77,6 @@ case "${1:-}" in
             for db in ${ODOO_DB_LIST}
             do
                 echo "ENTRY - Update database: ${db}"
-                : ${ODOO_RC:=/etc/odoo/odoo.conf}
                 click-odoo-update --ignore-core-addons -d "$db" -c "$ODOO_RC" --log-level=error
                 echo "ENTRY - Update database finished"
             done
