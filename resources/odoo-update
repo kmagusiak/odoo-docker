@@ -3,16 +3,20 @@
 update_switch="-u"
 case "${1:-}" in
 ""|-h)
-	echo "Usage: $0 module1,module2 [--install] ...options"
+	echo "Usage: $0 [-i] module1,module2 ...options"
 	echo
 	echo "Just run odoo with installation options."
 	echo "Modules can be a list of modules or a path where to find addons."
-	echo "  --install indicates to install instead of update"
+	echo "  --install, -i indicates to install instead of update"
 	exit 1
 	;;
 --install|-i)
 	shift
 	update_switch="-i"
+	;;
+--update|-u)
+	shift
+	update_switch="-u"
 	;;
 esac
 case "${1:-}" in

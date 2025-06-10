@@ -88,7 +88,7 @@ case "${1:-}" in
             if [ -n "${INSTALL_MODULES:-}" ] && echo "ENTRY - Check DB exists" && ! PGTIMEOUT=2 wait-for-psql.py
             then
                 echo "ENTRY - Initialize database $PGDATABASE: ${INSTALL_MODULES}"
-                odoo-update "$INSTALL_MODULES" "--install" "--load-language=${INSTALL_LANGUAGES:-}"
+                odoo-update -i "$INSTALL_MODULES" "--load-language=${INSTALL_LANGUAGES:-}"
             fi
         fi
 

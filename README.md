@@ -31,7 +31,7 @@ docker-compose up
 
 # inside the container
 odoo-bin shell  # get to the shell
-odoo-update sale --install --load-languages=en_GB
+odoo-update -i sale --load-languages=en_GB
 odoo-test -t -a template_module -d test_db_1
 
 # test using docker-compose
