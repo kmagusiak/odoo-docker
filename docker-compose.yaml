@@ -16,6 +16,11 @@ services:
     environment:
       PGHOST: db
       PGPORT: 5432
+      # for web
+      #DEBUGPY_ENABLE: 0
+      ODOO_PROXY_MODE: 1
+      ODOO_WORKERS: 2
+      ODOO_X_SENDFILE: 1
     restart: unless-stopped
     ports:
       - "8069"
@@ -23,7 +28,6 @@ services:
       - "41234"
     volumes:
       - odoo_data:/var/lib/odoo
-    command: ["odoo-bin", "--dev", "xml"]
     depends_on:
       - db
 
@@ -37,3 +41,14 @@ services:
       POSTGRES_PASSWORD: ${PGPASSWORD}
       POSTGRES_USER: ${PGUSER}
       PGDATA: /var/lib/postgresql/data
+
+  web:
+    image: nginx:bookworm
+    restart: unless-stopped
+    ports:
+      - "80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - odoo_data:/var/lib/odoo:ro
+    depends_on:
+      - odoo
