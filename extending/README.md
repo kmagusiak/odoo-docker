@@ -14,7 +14,7 @@ The recommended way of building your images is to:
 You can add a *health check* if you need it for production.
 
 ```
-healthcheck cmd curl --fail http://127.0.0.1:8069/web_editor/static/src/xml/ace.xml || exit 1
+healthcheck cmd curl --fail http://127.0.0.1:8069/web/health || exit 1
 ```
 
 ## Access to private repositories (SSH)
