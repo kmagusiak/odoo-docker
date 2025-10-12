@@ -5,9 +5,10 @@
 
 ###########################################################
 # SYSTEM
-# always set UTF-8 locale qnd redirect python output to stdout
+# always set UTF-8 locale and redirect python output to stdout
 
 from ubuntu:24.04 as system
+# has python-3.12, postgresql 16
 shell ["/bin/bash", "-xo", "pipefail", "-c"]
 env LANG C.UTF-8
 env PYTHONUNBUFFERED=1
