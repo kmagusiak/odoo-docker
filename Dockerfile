@@ -10,7 +10,7 @@
 from ubuntu:24.04 as system
 # has python-3.12, postgresql 16
 shell ["/bin/bash", "-xo", "pipefail", "-c"]
-env LANG C.UTF-8
+env LANG=C.UTF-8
 env PYTHONUNBUFFERED=1
 
 # Install dependencies (non-interactive flag for tzdata)
@@ -66,7 +66,7 @@ run pip install --prefix=/usr --no-cache-dir --upgrade \
 # Create user and mounts
 # /var/lib/odoo for filestore and HOME
 # /mnt/extra-addons for users addons
-env ODOO_RC /etc/odoo/odoo.conf
+env ODOO_RC=/etc/odoo/odoo.conf
 env ODOO_BASE_ADDONS=/opt/odoo-addons
 env ODOO_EXTRA_ADDONS=/mnt/extra-addons
 env PYTHON_DIST_PACKAGES=/usr/lib/python3/dist-packages
