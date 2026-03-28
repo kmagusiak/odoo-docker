@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - master
+      - 19.0
   pull_request:
     branches:
       - master
+      - 19.0
   workflow_dispatch:
     inputs:
       publish:
@@ -30,11 +32,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        odoo-version: ["master", "19.0"]
     env:
-      ODOO_VERSION: "${{ matrix.odoo-version }}"
+      ODOO_VERSION: "${{ github.event_name == 'pull_request' && github.base_ref  || github.ref_name }}"
       PUBLISH_IMAGES: "${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_dispatch' || github.event.inputs.publish)  }}"
 
     steps:
