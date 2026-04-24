@@ -7,8 +7,8 @@
 # SYSTEM
 # always set UTF-8 locale and redirect python output to stdout
 
-from ubuntu:24.04 as system
-# has python-3.12, postgresql 16
+from ubuntu:26.04 as system
+# has python-3.14, postgresql 18
 shell ["/bin/bash", "-xo", "pipefail", "-c"]
 env LANG=C.UTF-8
 env PYTHONUNBUFFERED=1
