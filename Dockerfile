@@ -59,7 +59,7 @@ run --mount=type=ssh git clone --quiet --depth 1 "--branch=$ODOO_VERSION" $ODOO_
 # - debug tools
 run pip install --prefix=/usr --no-cache-dir --upgrade \
     -r ${ODOO_BASEPATH}/requirements.txt \
-    dbfread geoip2 google-api-python-client \
+    dbfread geoip2 google-api-python-client markdown2 \
     pdfminer.six phonenumbers \
     python-magic python-slugify \
     click-odoo click-odoo-contrib \
