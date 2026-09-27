@@ -27,16 +27,16 @@ def main():
     # standard env variables for psql
     conn_info = {
         'host': os.environ.get('PGHOST'),
-        'port': int(os.environ.get('PGPORT', 5432)),
+        'port': int(os.environ.get('PGPORT', '5432')),
         'user': os.environ.get('PGUSER'),
         'password': os.environ.get('PGPASSWORD'),
         'dbname': os.environ.get('PGDATABASE', 'postgres'),
     }
-    timeout = int(os.environ.get('PGTIMEOUT', 30))
+    timeout = int(os.environ.get('PGTIMEOUT', '30'))
     try:
         try_connect(conn_info, timeout)
     except psycopg.Error as error:
-        print("Database connection failure: %s" % error, file=sys.stderr)
+        print(f"Database connection failure: {error}", file=sys.stderr)
         sys.exit(1)
 
 

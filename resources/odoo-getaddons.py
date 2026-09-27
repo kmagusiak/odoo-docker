@@ -12,14 +12,12 @@ import logging
 import os
 import sys
 
-MANIFEST_FILES = set(
-    [
-        '__manifest__.py',
-        '__odoo__.py',
-        '__openerp__.py',
-        '__terp__.py',
-    ]
-)
+MANIFEST_FILES = {
+    '__manifest__.py',
+    '__odoo__.py',
+    '__openerp__.py',
+    '__terp__.py',
+}
 _log = logging.getLogger('odoo-getaddons')
 
 
@@ -40,7 +38,7 @@ def is_module(path):
 
 def get_modules(path, depth=1):
     """Return modules of path repo"""
-    return sorted(list(get_modules_info(path, depth).keys()))
+    return sorted(get_modules_info(path, depth).keys())
 
 
 def get_modules_info(path, depth=1):
@@ -57,7 +55,7 @@ def get_modules_info(path, depth=1):
                 try:
                     with open(manifest_path) as f:
                         manifest = ast.literal_eval(f.read())
-                except Exception:
+                except Exception:  # noqa: BLE001
                     _log.warning('Failed to read the manifest %s', manifest_path, exc_info=True)
                     manifest = {}
                 if manifest.get('installable', True):
@@ -101,17 +99,17 @@ def get_dependencies(modules, module_name):
     result = set()
     for dependency in modules.get(module_name, {}).get('depends', []):
         result |= get_dependencies(modules, dependency)
-    return result | set([module_name])
+    return result | {module_name}
 
 
 def get_dependents(modules, module_name):
     """Return a set of all the modules that are dependent of the module_name.
     The module_name is included in the result."""
     result = set()
-    for dependent in modules.keys():
+    for dependent in modules:
         if module_name in modules.get(dependent, {}).get('depends', []):
             result |= get_dependents(modules, dependent)
-    return result | set([module_name])
+    return result | {module_name}
 
 
 def add_auto_install(modules, to_install):
@@ -144,7 +142,7 @@ def get_applications_with_dependencies(modules):
 def get_localizations_with_dependents(modules):
     """Return all localization modules with the modules that depend on them"""
     result = set()
-    for module in modules.keys():
+    for module in modules:
         if module.startswith('l10n_'):
             result |= get_dependents(modules, module)
     return result
@@ -201,7 +199,7 @@ def main(argv=None):
                 localizations = set()
         if args.application or args.localization:
             res = applications | localizations
-        res = sorted(list(res))
+        res = sorted(res)
     else:
         lists = [get_addons(path) for path in paths]
         res = [x for ls in lists for x in ls]  # flatten list of lists
