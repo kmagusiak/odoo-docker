@@ -29,7 +29,8 @@ def run_command(function, args):
 
 def create_database(dbname, modules=[], template=None):
     print(f"TEST - Drop database: {dbname}")
-    run_command('click-odoo-dropdb', ["--if-exists", dbname])
+    # click-odoo-dropdb is not supported in 20.0
+    run_command('dropdb', ["--if-exists", dbname])
     if template:
         print(f"TEST - Start from template database: {template}")
         run_command('click-odoo-copydb', [template, dbname])
