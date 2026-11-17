@@ -62,6 +62,7 @@ run pip install --prefix=/usr --no-cache-dir --upgrade \
     dbfread geoip2 google-api-python-client markdown2 \
     paramiko pdfminer.six phonenumbers \
     python-magic python-slugify \
+    pyyaml jsonschema \
     click-odoo click-odoo-contrib \
     debugpy py-spy
 
